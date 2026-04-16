@@ -119,13 +119,13 @@ PresentationApp/
 export JAVA_HOME=<path-to-jdk17>
 export ANDROID_HOME=<path-to-android-sdk>
 ./gradlew assembleDebug
-# Output: app/build/outputs/apk/debug/app-debug.apk
+# Output: app/build/outputs/apk/debug/PresentationTimer.apk
 ```
 
 ### Install directly via ADB
 
 ```bash
-adb install app/build/outputs/apk/debug/app-debug.apk
+adb install app/build/outputs/apk/debug/PresentationTimer.apk
 ```
 
 ---
@@ -133,7 +133,7 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 ## Install on Your Phone (without a computer)
 
 1. Go to [Releases](https://github.com/pedroaovieira/PresentationApp/releases/latest)
-2. Download `app-debug.apk`
+2. Download `PresentationTimer.apk`
 3. On your phone: **Settings → Apps → Install unknown apps** → enable for your browser
 4. Tap the downloaded file and follow the prompts
 

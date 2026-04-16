@@ -40,7 +40,7 @@ Out of the box it has three phases (green → yellow → red), but you can add a
 
 1. On your Android phone, open the browser and go to:  
    **https://github.com/pedroaovieira/PresentationApp/releases/latest**
-2. Tap **app-debug.apk** to download it.
+2. Tap **PresentationTimer.apk** to download it.
 3. When prompted, allow your browser to install unknown apps:  
    **Settings → Apps → Special app access → Install unknown apps → [your browser] → Allow**
 4. Tap the downloaded file in the notification shade or in Downloads.
@@ -49,7 +49,7 @@ Out of the box it has three phases (green → yellow → red), but you can add a
 ### From the command line (developer)
 
 ```bash
-adb install app/build/outputs/apk/debug/app-debug.apk
+adb install app/build/outputs/apk/debug/PresentationTimer.apk
 ```
 
 > **Requirements:** Android 8.0 (API 26) or higher.
