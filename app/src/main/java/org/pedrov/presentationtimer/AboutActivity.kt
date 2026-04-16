@@ -1,5 +1,7 @@
 package org.pedrov.presentationtimer
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +21,10 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.title = "About"
 
         binding.tvVersion.text = "Version ${BuildConfig.VERSION_NAME}"
+
+        binding.tvWebsite.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://pedrov.org")))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

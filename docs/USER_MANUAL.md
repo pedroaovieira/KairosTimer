@@ -236,6 +236,7 @@ The About screen shows:
 | Tagline | Short description of the app |
 | Developer | Pedro Vieira — App Developer |
 | AI Partner | Claude.ai by Anthropic — AI Development Partner |
+| Website | [pedrov.org](https://pedrov.org) |
 | License | Open Source · MIT License |
 
-This app was built collaboratively by **Pedro Vieira** and **Claude.ai** (Anthropic's AI assistant). The source code is freely available at [github.com/pedroaovieira/PresentationApp](https://github.com/pedroaovieira/PresentationApp).
+This app was built collaboratively by **Pedro Vieira** and **Claude.ai** (Anthropic's AI assistant). The source code is freely available at [github.com/pedroaovieira/PresentationApp](https://github.com/pedroaovieira/PresentationApp). More from the developer at [pedrov.org](https://pedrov.org).
