@@ -1,6 +1,18 @@
 # PresentationTimer — Android App
 
-A clean, full-screen Android timer designed for presenters. At a glance you know whether you're on track, running short, or out of time — no fiddling required.
+A full-screen countdown timer built for presenters. The background colour tells you exactly where you stand — no squinting, no distractions.
+
+---
+
+## Screenshots
+
+| Setup | Running — Green | Running — Yellow | Running — Red |
+|:---:|:---:|:---:|:---:|
+| ![Setup](docs/screenshots/01_setup.png) | ![Green](docs/screenshots/02_green.png) | ![Yellow](docs/screenshots/03_yellow.png) | ![Red](docs/screenshots/04_red.png) |
+
+| Time's Up | Settings — Phases | Settings — Add Phase |
+|:---:|:---:|:---:|
+| ![Finished](docs/screenshots/05_finished.png) | ![Settings](docs/screenshots/06_settings.png) | ![Add Phase](docs/screenshots/07_settings_add.png) |
 
 ---
 
@@ -9,25 +21,24 @@ A clean, full-screen Android timer designed for presenters. At a glance you know
 | Feature | Details |
 |---|---|
 | Custom duration | Set hours, minutes, and seconds before starting |
-| Green phase | More than 50% of time remaining |
-| Yellow phase | Between 20% and 50% remaining — time to wrap up |
-| Red phase | Under 20% remaining — hurry up! |
-| Flash | Timer hits zero → screen flashes red |
+| Configurable phases | Define as many phases as you want, each with its own colour, message, and threshold |
+| Arc progress ring | Visual sweep shows time remaining at a glance |
 | Pause / Resume | Freeze the clock mid-presentation |
-| Reset | Go back to setup at any time |
-| Screen always on | `FLAG_KEEP_SCREEN_ON` prevents the display sleeping |
-| Arc progress ring | Visual sweep shows how much time is left |
+| Reset | Return to setup at any time |
+| Screen always on | `FLAG_KEEP_SCREEN_ON` prevents display sleep |
+| Flash on finish | Screen flashes when time is up |
 
 ---
 
-## Color Logic
+## Default Colour Phases
 
-```
-> 50% remaining  →  Dark green background
-20–50% remaining →  Amber/yellow background
-< 20% remaining  →  Dark red background
-Time's up        →  Flashing red
-```
+| Phase | Trigger | Background | Message |
+|---|---|---|---|
+| On track | ≥ 50% remaining | Dark green | On track 🟢 |
+| Hurry up | ≥ 20% remaining | Amber | Hurry up! 🟡 |
+| Almost done | ≥ 0% remaining | Dark red | Almost out of time! 🔴 |
+
+All phases are fully configurable — see [User Manual](docs/USER_MANUAL.md).
 
 ---
 
@@ -38,6 +49,7 @@ Time's up        →  Flashing red
 - **View Binding**
 - **Material Components** — `CircularProgressIndicator`, `MaterialButton`, `TextInputLayout`
 - `CountDownTimer` for precise countdown
+- `SharedPreferences` + JSON for persistent phase settings
 
 ---
 
@@ -48,16 +60,27 @@ PresentationApp/
 ├── build.gradle               ← Top-level Gradle config
 ├── settings.gradle
 ├── gradle.properties
+├── gradlew / gradlew.bat      ← Gradle wrapper
+├── docs/
+│   ├── USER_MANUAL.md
+│   ├── USER_MANUAL.pdf
+│   └── screenshots/
 └── app/
-    ├── build.gradle           ← App module config (SDK versions, dependencies)
+    ├── build.gradle           ← App module (SDK, dependencies)
     └── src/main/
         ├── AndroidManifest.xml
         ├── java/com/presentationapp/
-        │   ├── MainActivity.kt       ← UI controller, animations
-        │   └── TimerViewModel.kt     ← Timer state, CountDownTimer logic
+        │   ├── MainActivity.kt         ← UI controller
+        │   ├── TimerViewModel.kt       ← Timer state & countdown logic
+        │   ├── PhaseConfig.kt          ← Phase data model + JSON
+        │   ├── PhasesRepository.kt     ← SharedPreferences persistence
+        │   ├── SettingsActivity.kt     ← Settings screen
+        │   └── PhaseAdapter.kt         ← RecyclerView adapter for phases
         └── res/
             ├── layout/
-            │   └── activity_main.xml
+            │   ├── activity_main.xml
+            │   ├── activity_settings.xml
+            │   └── item_phase.xml
             └── values/
                 ├── colors.xml
                 ├── strings.xml
@@ -72,7 +95,7 @@ PresentationApp/
 
 - Android Studio Hedgehog (2023.1.1) or newer
 - Android SDK API 26+
-- JDK 8+
+- JDK 17+
 
 ### Build & Run
 
@@ -86,20 +109,20 @@ PresentationApp/
 
 3. Let Gradle sync complete.
 
-4. Run on a device or emulator (API 26+):
-   - Connect your Android phone via USB with **USB Debugging** enabled, or
-   - Use an AVD emulator
+4. Connect your Android phone (USB Debugging enabled) or start an AVD emulator.
 
 5. Click **Run** (▶) or press `Shift+F10`.
 
-### Build APK from command line
+### Build APK from the command line
 
 ```bash
+export JAVA_HOME=<path-to-jdk17>
+export ANDROID_HOME=<path-to-android-sdk>
 ./gradlew assembleDebug
-# APK output: app/build/outputs/apk/debug/app-debug.apk
+# Output: app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Install APK directly on device
+### Install directly via ADB
 
 ```bash
 adb install app/build/outputs/apk/debug/app-debug.apk
@@ -107,10 +130,26 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
+## Install on Your Phone (without a computer)
+
+1. Go to [Releases](https://github.com/pedroaovieira/PresentationApp/releases/latest)
+2. Download `app-debug.apk`
+3. On your phone: **Settings → Apps → Install unknown apps** → enable for your browser
+4. Tap the downloaded file and follow the prompts
+
+---
+
 ## Requirements
 
-- Android **API 26** (Android 8.0 Oreo) or higher
+- Android **8.0 (API 26)** or higher
 - Portrait orientation
+
+---
+
+## Documentation
+
+- [User Manual (Markdown)](docs/USER_MANUAL.md)
+- [User Manual (PDF)](docs/USER_MANUAL.pdf)
 
 ---
 
