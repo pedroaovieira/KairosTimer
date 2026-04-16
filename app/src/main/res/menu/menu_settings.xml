@@ -5,4 +5,9 @@
         android:id="@+id/action_save"
         android:title="Save"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_about"
+        android:title="About"
+        android:icon="@drawable/ic_info"
+        app:showAsAction="never" />
 </menu>

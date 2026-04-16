@@ -326,6 +326,66 @@ def screen_settings_add():
     img.save(os.path.join(OUT, "07_settings_add.png"))
     print("07_settings_add.png")
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# SCREEN 8: About screen
+# ═══════════════════════════════════════════════════════════════════════════════
+def screen_about():
+    img = Image.new("RGB", (W, H), (250, 250, 250))
+    draw = ImageDraw.Draw(img, "RGBA")
+
+    # Toolbar
+    draw.rectangle([0, 0, W, 80], fill=BG_GREEN)
+    text_at(draw, "←", 18, 26, font(24, bold=True), WHITE)
+    text_at(draw, "About", 56, 28, font(20, bold=True), WHITE)
+
+    # App icon (circular green background with timer icon)
+    ic_cx, ic_cy = W // 2, 190
+    ic_r = 46
+    draw.ellipse([ic_cx - ic_r, ic_cy - ic_r, ic_cx + ic_r, ic_cy + ic_r],
+                 fill=hex2rgb("#1B5E20"))
+    # Timer circle inside icon
+    tr = 30
+    draw.arc([ic_cx - tr, ic_cy - tr - 4, ic_cx + tr, ic_cy + tr - 4],
+             0, 360, fill=WHITE, width=4)
+    draw.line([ic_cx, ic_cy - 4, ic_cx, ic_cy - 18], fill=WHITE, width=3)
+    draw.line([ic_cx, ic_cy - 4, ic_cx + 12, ic_cy + 4], fill=WHITE, width=3)
+
+    # App name
+    text_center(draw, "PresentationTimer", 255, font(22, bold=True), hex2rgb("#1B5E20"))
+    text_center(draw, "Version 1.2.0", 287, font(14), (117, 117, 117))
+    text_center(draw, "Full-screen countdown for presenters", 312, font(13), (55, 71, 79))
+
+    # Divider
+    div_x = W // 2
+    draw.rectangle([div_x - 36, 342, div_x + 36, 344], fill=hex2rgb("#A5D6A7"))
+
+    # "DEVELOPED BY"
+    text_center(draw, "DEVELOPED BY", 360, font(11, bold=True), (158, 158, 158))
+
+    # Pedro card
+    def dev_card(y, initials, name, role, circle_color):
+        draw.rounded_rectangle([16, y, W - 16, y + 72], radius=12, fill=WHITE)
+        draw.rounded_rectangle([16, y + 2, 16 + 3, y + 70], radius=2,
+                                fill=hex2rgb(circle_color))
+        # Avatar circle
+        ax, ay = 52, y + 36
+        draw.ellipse([ax - 22, ay - 22, ax + 22, ay + 22],
+                     fill=hex2rgb(circle_color))
+        text_at(draw, initials, ax, ay - 8, font(14, bold=True), WHITE, anchor="ma")
+        # Text
+        text_at(draw, name, 84, y + 14, font(16, bold=True), DARK_TEXT)
+        text_at(draw, role, 84, y + 40, font(13), (117, 117, 117))
+
+    dev_card(382, "PV", "Pedro Vieira",  "App Developer",              "#2E7D32")
+    dev_card(464, "AI", "Claude.ai",     "AI Partner · Anthropic",     "#CC785C")
+
+    # License
+    text_center(draw, "Open Source · MIT License", 554, font(13), (158, 158, 158))
+    text_center(draw, "© 2025 Pedro Vieira",        576, font(13), (158, 158, 158))
+
+    img.save(os.path.join(OUT, "08_about.png"))
+    print("08_about.png")
+
 # ── run all ──────────────────────────────────────────────────────────────────
 screen_setup()
 screen_running(BG_GREEN, (165, 214, 167), "On track 🟢", "18:24", 68, "02_green.png")
@@ -334,4 +394,5 @@ screen_running(BG_RED,   (239, 154, 154), "Almost out of time! 🔴", "01:42", 1
 screen_finished()
 screen_settings()
 screen_settings_add()
+screen_about()
 print("Done — all screenshots in docs/screenshots/")

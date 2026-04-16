@@ -1,6 +1,6 @@
 # PresentationTimer — User Manual
 
-**Version 1.1.0**
+**Version 1.2.0**
 
 ---
 
@@ -22,6 +22,7 @@
    - [Saving Changes](#55-saving-changes)
 6. [Phase Logic Explained](#6-phase-logic-explained)
 7. [Tips for Presenters](#7-tips-for-presenters)
+8. [About](#8-about)
 
 ---
 
@@ -218,3 +219,23 @@ Phases are sorted by their threshold, highest first. During the timer, the app p
 - **Don't cover the screen:** Lay the phone flat or prop it at an angle. Don't put it in your pocket — the screen stays on automatically.
 - **Long presentations:** For talks over an hour, enter the hours in the **HH** field. The time display switches to `H:MM:SS` format automatically.
 - **Custom messages for your audience:** If you are timing a panel or multiple speakers, you can set messages like "5 min left" or "Wrap up now" that make sense for your context.
+
+---
+
+## 8. About
+
+<img src="screenshots/08_about.png" width="240" alt="About screen">
+
+Tap the **gear icon** on the setup screen → tap the **⋮ overflow menu** (top-right of the Settings toolbar) → tap **About** to open the About screen.
+
+The About screen shows:
+
+| Item | Details |
+|---|---|
+| App name and version | PresentationTimer, current version |
+| Tagline | Short description of the app |
+| Developer | Pedro Vieira — App Developer |
+| AI Partner | Claude.ai by Anthropic — AI Development Partner |
+| License | Open Source · MIT License |
+
+This app was built collaboratively by **Pedro Vieira** and **Claude.ai** (Anthropic's AI assistant). The source code is freely available at [github.com/pedroaovieira/PresentationApp](https://github.com/pedroaovieira/PresentationApp).

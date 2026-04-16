@@ -1,5 +1,6 @@
 package com.presentationapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -50,6 +51,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_save -> { save(); true }
+            R.id.action_about -> { startActivity(Intent(this, AboutActivity::class.java)); true }
             android.R.id.home -> { save(); finish(); true }
             else -> super.onOptionsItemSelected(item)
         }

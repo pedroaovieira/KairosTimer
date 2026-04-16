@@ -10,9 +10,9 @@ A full-screen countdown timer built for presenters. The background colour tells 
 |:---:|:---:|:---:|:---:|
 | ![Setup](docs/screenshots/01_setup.png) | ![Green](docs/screenshots/02_green.png) | ![Yellow](docs/screenshots/03_yellow.png) | ![Red](docs/screenshots/04_red.png) |
 
-| Time's Up | Settings — Phases | Settings — Add Phase |
-|:---:|:---:|:---:|
-| ![Finished](docs/screenshots/05_finished.png) | ![Settings](docs/screenshots/06_settings.png) | ![Add Phase](docs/screenshots/07_settings_add.png) |
+| Time's Up | Settings — Phases | Settings — Add Phase | About |
+|:---:|:---:|:---:|:---:|
+| ![Finished](docs/screenshots/05_finished.png) | ![Settings](docs/screenshots/06_settings.png) | ![Add Phase](docs/screenshots/07_settings_add.png) | ![About](docs/screenshots/08_about.png) |
 
 ---
 
@@ -150,6 +150,7 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 - [User Manual (Markdown)](docs/USER_MANUAL.md)
 - [User Manual (PDF)](docs/USER_MANUAL.pdf)
+- [Google Play Store Guide](docs/GOOGLE_PLAY_STORE.md)
 
 ---
 
