@@ -1,4 +1,4 @@
-package com.presentationapp
+package org.pedrov.presentationtimer
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.presentationapp.databinding.ItemPhaseBinding
+import org.pedrov.presentationtimer.databinding.ItemPhaseBinding
 
 val PRESET_COLORS = listOf(
     "#1B5E20", "#2E7D32", "#66BB6A",

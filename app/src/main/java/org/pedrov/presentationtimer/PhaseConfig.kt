@@ -1,4 +1,4 @@
-package com.presentationapp
+package org.pedrov.presentationtimer
 
 import org.json.JSONArray
 import org.json.JSONObject

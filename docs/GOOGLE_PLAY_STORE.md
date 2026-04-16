@@ -1,7 +1,7 @@
 # PresentationTimer — Google Play Store Submission Guide
 
 **App version:** 1.2.0  
-**Package name:** `com.presentationapp`  
+**Package name:** `org.pedrov.presentationtimer`  
 **Prepared:** April 2025
 
 ---
@@ -267,7 +267,7 @@ For questions, contact: pvieira.uminho@gmail.com
 
 | Field | Value |
 |---|---|
-| Package name | `com.presentationapp` |
+| Package name | `org.pedrov.presentationtimer` |
 | Minimum SDK | Android 8.0 (API 26) |
 | Target SDK | Android 14 (API 34) |
 | Version code | 2 |

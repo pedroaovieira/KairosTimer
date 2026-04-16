@@ -10,7 +10,7 @@
         android:theme="@style/Theme.PresentationApp">
 
         <activity
-            android:name=".MainActivity"
+            android:name="org.pedrov.presentationtimer.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
@@ -21,15 +21,15 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name="org.pedrov.presentationtimer.SettingsActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="org.pedrov.presentationtimer.MainActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".AboutActivity"
+            android:name="org.pedrov.presentationtimer.AboutActivity"
             android:exported="false"
-            android:parentActivityName=".SettingsActivity" />
+            android:parentActivityName="org.pedrov.presentationtimer.SettingsActivity" />
 
     </application>
 

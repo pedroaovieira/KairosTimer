@@ -1,4 +1,4 @@
-package com.presentationapp
+package org.pedrov.presentationtimer
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.presentationapp.databinding.ActivitySettingsBinding
+import org.pedrov.presentationtimer.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 

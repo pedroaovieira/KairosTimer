@@ -1,9 +1,9 @@
-package com.presentationapp
+package org.pedrov.presentationtimer
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.presentationapp.databinding.ActivityAboutBinding
+import org.pedrov.presentationtimer.databinding.ActivityAboutBinding
 
 class AboutActivity : AppCompatActivity() {
 

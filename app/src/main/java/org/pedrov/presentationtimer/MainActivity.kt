@@ -1,4 +1,4 @@
-package com.presentationapp
+package org.pedrov.presentationtimer
 
 import android.content.Intent
 import android.graphics.Color
@@ -10,7 +10,7 @@ import android.view.animation.Animation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.presentationapp.databinding.ActivityMainBinding
+import org.pedrov.presentationtimer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

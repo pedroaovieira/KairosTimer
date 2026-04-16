@@ -1,4 +1,4 @@
-package com.presentationapp
+package org.pedrov.presentationtimer
 
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
