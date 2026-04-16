@@ -9,6 +9,20 @@
     android:background="@color/bg_green"
     tools:context=".MainActivity">
 
+    <!-- Settings button (top-right, visible only on setup screen) -->
+    <ImageButton
+        android:id="@+id/btnSettings"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_settings"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Settings"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp" />
+
     <!-- Phase label -->
     <TextView
         android:id="@+id/tvPhaseLabel"

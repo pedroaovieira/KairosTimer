@@ -5,25 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-enum class TimerPhase {
-    SETUP,      // Screen where user sets the duration
-    RUNNING,    // Timer is actively counting down
-    PAUSED,     // Timer is paused mid-way
-    FINISHED    // Timer reached zero
-}
-
-enum class TimerColor {
-    GREEN,  // > 50% remaining
-    YELLOW, // 20–50% remaining
-    RED,    // <= 20% remaining
-    FLASH   // Overtime / finished
-}
+enum class TimerPhase { SETUP, RUNNING, PAUSED, FINISHED }
 
 data class TimerState(
     val totalSeconds: Long = 0L,
     val remainingMillis: Long = 0L,
     val phase: TimerPhase = TimerPhase.SETUP,
-    val color: TimerColor = TimerColor.GREEN,
+    val activePhase: PhaseConfig? = null,
     val isFlashing: Boolean = false
 )
 
@@ -32,11 +20,20 @@ class TimerViewModel : ViewModel() {
     private val _state = MutableLiveData(TimerState())
     val state: LiveData<TimerState> = _state
 
+    var phases: List<PhaseConfig> = PhaseConfig.defaults
+        set(value) {
+            field = value.sortedByDescending { it.thresholdPercent }
+            val current = _state.value ?: return
+            if (current.phase == TimerPhase.RUNNING || current.phase == TimerPhase.PAUSED) {
+                _state.value = current.copy(
+                    activePhase = computePhase(current.remainingMillis, current.totalSeconds * 1000L)
+                )
+            }
+        }
+
     private var countDownTimer: CountDownTimer? = null
     private var totalMillis: Long = 0L
     private var remainingMillis: Long = 0L
-
-    // --- Setup ---
 
     fun setDuration(hours: Int, minutes: Int, seconds: Int) {
         totalMillis = ((hours * 3600L) + (minutes * 60L) + seconds) * 1000L
@@ -45,17 +42,14 @@ class TimerViewModel : ViewModel() {
             totalSeconds = totalMillis / 1000L,
             remainingMillis = totalMillis,
             phase = TimerPhase.SETUP,
-            color = TimerColor.GREEN
+            activePhase = phases.maxByOrNull { it.thresholdPercent }
         )
     }
-
-    // --- Controls ---
 
     fun start() {
         if (totalMillis <= 0L) return
         val currentPhase = _state.value?.phase ?: return
         if (currentPhase == TimerPhase.RUNNING) return
-
         launchTimer(remainingMillis)
     }
 
@@ -71,24 +65,20 @@ class TimerViewModel : ViewModel() {
             totalSeconds = totalMillis / 1000L,
             remainingMillis = totalMillis,
             phase = TimerPhase.SETUP,
-            color = TimerColor.GREEN
+            activePhase = phases.maxByOrNull { it.thresholdPercent }
         )
     }
-
-    // --- Internal ---
 
     private fun launchTimer(fromMillis: Long) {
         countDownTimer?.cancel()
         countDownTimer = object : CountDownTimer(fromMillis, 100) {
-
             override fun onTick(millisUntilFinished: Long) {
                 remainingMillis = millisUntilFinished
-                val color = computeColor(millisUntilFinished, totalMillis)
                 _state.value = TimerState(
                     totalSeconds = totalMillis / 1000L,
                     remainingMillis = millisUntilFinished,
                     phase = TimerPhase.RUNNING,
-                    color = color
+                    activePhase = computePhase(millisUntilFinished, totalMillis)
                 )
             }
 
@@ -98,7 +88,7 @@ class TimerViewModel : ViewModel() {
                     totalSeconds = totalMillis / 1000L,
                     remainingMillis = 0L,
                     phase = TimerPhase.FINISHED,
-                    color = TimerColor.FLASH,
+                    activePhase = phases.minByOrNull { it.thresholdPercent },
                     isFlashing = true
                 )
             }
@@ -107,14 +97,12 @@ class TimerViewModel : ViewModel() {
         _state.value = _state.value?.copy(phase = TimerPhase.RUNNING)
     }
 
-    private fun computeColor(remainingMillis: Long, totalMillis: Long): TimerColor {
-        if (totalMillis == 0L) return TimerColor.GREEN
-        val fraction = remainingMillis.toDouble() / totalMillis.toDouble()
-        return when {
-            fraction > 0.50 -> TimerColor.GREEN
-            fraction > 0.20 -> TimerColor.YELLOW
-            else -> TimerColor.RED
-        }
+    private fun computePhase(remainingMillis: Long, totalMillis: Long): PhaseConfig? {
+        if (phases.isEmpty()) return null
+        if (totalMillis == 0L) return phases.maxByOrNull { it.thresholdPercent }
+        val percent = ((remainingMillis.toDouble() / totalMillis.toDouble()) * 100).toInt()
+        val sorted = phases.sortedByDescending { it.thresholdPercent }
+        return sorted.firstOrNull { percent >= it.thresholdPercent } ?: sorted.last()
     }
 
     override fun onCleared() {
