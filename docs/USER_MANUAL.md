@@ -1,6 +1,6 @@
 # PresentationTimer — User Manual
 
-**Version 1.3.2**
+**Version 1.4.0**
 
 ---
 
@@ -28,9 +28,9 @@
 
 ## 1. Overview
 
-**PresentationTimer** is a full-screen countdown timer designed for speakers and presenters. A coloured accent bar across the top of the screen — and a matching progress bar and status label — show exactly where you stand at a single glance, without interrupting your flow.
+**PresentationTimer** is a full-screen countdown timer designed for speakers and presenters. When you start the timer, the entire screen floods with the active phase colour — mint green, amber, or coral — giving you an unmistakable at-a-glance cue visible from across a room.
 
-The design is dark and cinematic: a deep `#131313` background keeps the focus on the clock, while a 4 dp aura bar and a thin linear progress bar smoothly cross-fade between phase colours as time passes.
+A thin aura bar at the top of the screen, a live percentage readout, and a linear progress bar all update smoothly as time passes. A breathing halo effect pulses behind the countdown digits while the timer is running, making it easy to tell at a glance that everything is active.
 
 Out of the box there are three phases (mint green → amber → coral), but you can add as many as you like and customise the colour, threshold, and message of each one.
 
@@ -61,10 +61,10 @@ adb install app/build/outputs/apk/debug/PresentationTimer.apk
 ## 3. Quick Start
 
 1. Open **PresentationTimer** on your phone.
-2. Enter your presentation duration — hours, minutes, seconds.
+2. Enter your presentation duration — hours, minutes, seconds — or tap a **quick preset** (5 / 15 / 25 / 45 min).
 3. Tap **INITIALIZE**.
 4. Put the phone face-up on the lectern or prop it where you can see it.
-5. Glance at the coloured aura bar whenever you need a time check.
+5. Glance at the background colour whenever you need a time check.
 
 That's it.
 
@@ -82,39 +82,53 @@ When you first open the app you see the **setup screen**:
 |---|---|
 | **TEMPORAL** (top centre) | App brand name |
 | Gear icon (top-right) | Opens the phase settings |
-| **SET THE PACE** headline | Large editorial heading in the centre |
+| **SET THE PACE** headline | Large editorial heading |
 | **HH : MM : SS** fields | Enter your desired duration (all fields default to 00) |
+| **QUICK PRESETS** pills | One-tap fill: 5, 15, 25, or 45 minutes |
 | **INITIALIZE** button | Begins the countdown |
 
-**Enter your time:** Tap each field (HH, MM, SS) and type the number. You only need to fill the fields you use — e.g., type `25` in MM for a 25-minute talk.
+**Enter your time:** Tap a field (HH, MM, SS) and type the number, or tap a preset pill to fill the minutes field instantly. You only need to fill the fields you use — e.g., type `45` in MM for a 45-minute talk.
 
 ---
 
 ### 4.2 Running
 
 <img src="screenshots/02_green.png" width="240" alt="Running — green phase">
+<img src="screenshots/03_yellow.png" width="240" alt="Running — amber phase">
+<img src="screenshots/04_red.png" width="240" alt="Running — coral phase">
 
 While the timer is running:
 
 - The **background** fills with the active phase colour (mint → amber → coral by default).
-- The **status label** below the brand name shows the phase message in large, readable text.
-- The **countdown** is shown in massive digits at the centre.
-- The **linear progress bar** below the countdown depletes as time passes.
+- The **aura bar** at the top matches the dark ink — a strong contrast stripe to anchor the layout.
+- The **phase message** appears below the brand name in bold text.
+- The **countdown** is shown in large digits at the centre.
+- A **breathing halo** pulses behind the digits, confirming the timer is running.
+- The **progress row** shows the live percentage and a depleting bar below the digits.
 
-All colours — background, aura bar, progress bar — cross-fade with a 500 ms animation when a phase changes.
+All colours — background, progress bar — cross-fade with a 500 ms animation when a phase changes.
 
 **Controls while running:**
 
 | Button | Action |
 |---|---|
-| **Pause** (large circle) | Freezes the countdown. |
-| **Reset** (small dark circle) | Cancels the timer and returns to the setup screen. |
+| **PAUSE** (left pill) | Freezes the countdown. |
+| **STOP** (right pill) | Cancels the timer and returns to the setup screen. |
 
 ---
 
 ### 4.3 Paused
 
-When paused the background stays the colour of the phase you paused in, and the label changes to **"PAUSED"**. The **▶ RESUME** button appears — tap it to continue.
+<img src="screenshots/03b_paused.png" width="240" alt="Paused state">
+
+When paused:
+
+- The background stays the colour of the phase you paused in.
+- The label changes to **"PAUSED"**.
+- The countdown digits fade to 55% opacity to signal the paused state.
+- The halo stops pulsing.
+- The left pill changes to **▶  RESUME** — tap it to continue.
+- The **STOP** pill remains available to cancel entirely.
 
 ---
 
@@ -125,9 +139,9 @@ When paused the background stays the colour of the phase you paused in, and the 
 When the countdown reaches zero:
 
 - The timer **flashes** to grab your attention.
-- The status label reads **"TIME'S UP"**.
-- The aura bar holds the colour of the last active phase.
-- Tap **Reset** to go back to setup.
+- The label reads **"TIME'S UP"**.
+- The background holds the colour of the last active phase.
+- Tap **RESET** to return to the setup screen.
 
 ---
 
@@ -145,16 +159,16 @@ Tap the **gear icon** in the top-right corner of the setup screen. The phases ed
 
 <img src="screenshots/06_settings.png" width="240" alt="Settings screen">
 
-Each phase is shown as a dark card with four editable fields:
+Each phase is shown as a dark card with the following fields:
 
 | Field | What it does |
 |---|---|
 | **Phase name** | A label for your own reference (not shown during the timer). |
-| **Active when ≥ X% remaining** | The minimum percentage of time remaining for this phase to be active. For example, `50` means this phase shows when more than half the time is left. |
-| **Message** | The text shown at the top of the screen while this phase is active. |
+| **Active when ≥ X%** slider | Drag to set the minimum percentage of time remaining for this phase to activate. The current value is shown on the right in real time. |
+| **Message** | The text displayed at the top of the screen while this phase is active. |
 | **Background color** | Tap any colour swatch to select it. The selected colour is highlighted with a white ring. |
 
-All fields save automatically when you press **Save** or navigate back.
+All fields save automatically when you tap **Save** or press the back button.
 
 ---
 
@@ -169,7 +183,7 @@ Tap the green **+** button (bottom-right) to add a new phase card. A default car
 | Field | Value |
 |---|---|
 | Phase name | Wrap up |
-| Active when ≥ | 10 |
+| Active when ≥ | 10% |
 | Message | Start wrapping up! |
 | Colour | Orange |
 
@@ -187,7 +201,7 @@ Tap the **red trash icon** in the top-right of any phase card to delete it.
 
 ### 5.5 Saving Changes
 
-Tap **Save** in the toolbar, or simply press the **back** button. A "Phases saved" message will confirm the save. Changes take effect immediately — the next timer you start will use the updated phases.
+Tap **Save** in the toolbar, or press the **back** button. A "Phases saved" message confirms the save. Changes take effect immediately — the next timer you start will use the updated phases.
 
 ---
 
@@ -214,18 +228,21 @@ Phases are sorted by their threshold, highest first. During the timer, the app p
 
 ## 7. Tips for Presenters
 
-- **Keep it simple:** The default three phases (mint green → amber → coral) work for most talks. Only customise if you have a specific need.
 - **Use the background colour:** The full-screen phase colour is visible even in bright rooms and from a distance — you don't need to read the digits.
+- **Use presets for common talks:** The 15 / 25 / 45 min preset pills let you start quickly without typing.
 - **Screen brightness:** Turn your phone brightness to maximum before your talk so the accent colour is clearly visible.
 - **Don't cover the screen:** Lay the phone flat or prop it at an angle. The display stays on automatically.
 - **Long presentations:** For talks over an hour, enter the hours in the **HH** field. The time display switches to `H:MM:SS` format automatically.
 - **Custom messages:** If you are timing a panel or multiple speakers, set messages like "5 min left" or "Wrap up now" that make sense for your context.
+- **Keep it simple:** The default three phases (mint green → amber → coral) work for most talks. Only customise if you have a specific need.
 
 ---
 
 ## 8. About
 
 Tap the **gear icon** on the setup screen → tap the **ℹ️ icon** in the top-right of the Settings toolbar to open the About screen.
+
+<img src="screenshots/08_about.png" width="240" alt="About screen">
 
 The About screen shows:
 
