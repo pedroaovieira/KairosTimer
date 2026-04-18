@@ -53,25 +53,52 @@
 
         </LinearLayout>
 
-        <!-- Threshold % -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        <!-- Threshold % — live slider -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="Active when ≥ X% remaining (0–100)"
-            app:hintTextColor="@color/outline"
-            app:boxStrokeColor="@color/outline_variant"
-            app:boxBackgroundColor="@color/surface_container">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etThreshold"
-                android:layout_width="match_parent"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="3"
-                android:textColor="@color/on_surface"
-                android:fontFamily="@font/manrope" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:text="ACTIVE WHEN ≥"
+                android:textSize="9sp"
+                android:textColor="@color/outline"
+                android:fontFamily="@font/manrope"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <TextView
+                android:id="@+id/tvThresholdValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50%"
+                android:textSize="14sp"
+                android:textColor="@color/primary"
+                android:fontFamily="@font/space_grotesk"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sliderThreshold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="-8dp"
+            android:layout_marginEnd="-8dp"
+            android:valueFrom="0"
+            android:valueTo="100"
+            android:stepSize="1"
+            app:thumbColor="@color/primary"
+            app:trackColorActive="@color/primary"
+            app:trackColorInactive="@color/outline_variant"
+            app:thumbRadius="10dp"
+            app:labelBehavior="gone" />
 
         <!-- Message -->
         <com.google.android.material.textfield.TextInputLayout

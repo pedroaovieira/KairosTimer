@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import org.pedrov.presentationtimer.databinding.ItemPhaseBinding
 
 val PRESET_COLORS = listOf(
-    "#1B5E20", "#2E7D32", "#66BB6A",
-    "#F9A825", "#E65100", "#FF6D00",
-    "#B71C1C", "#C62828", "#EF5350",
-    "#1565C0", "#0D47A1", "#6A1B9A",
-    "#37474F", "#00695C", "#4E342E"
+    "#5AF0B3", "#34D399", "#FFB95F",
+    "#FFCAC5", "#60A5FA", "#F87171",
+    "#A78BFA", "#FBBF24", "#FB923C",
+    "#1565C0", "#6A1B9A", "#37474F"
 )
 
 class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
@@ -25,13 +24,12 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
     inner class PhaseViewHolder(val binding: ItemPhaseBinding) :
         RecyclerView.ViewHolder(binding.root) {
         var nameWatcher: TextWatcher? = null
-        var thresholdWatcher: TextWatcher? = null
         var messageWatcher: TextWatcher? = null
 
         fun clearWatchers() {
             nameWatcher?.let { binding.etName.removeTextChangedListener(it) }
-            thresholdWatcher?.let { binding.etThreshold.removeTextChangedListener(it) }
             messageWatcher?.let { binding.etMessage.removeTextChangedListener(it) }
+            binding.sliderThreshold.clearOnChangeListeners()
         }
     }
 
@@ -47,8 +45,11 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
         val b = holder.binding
 
         b.etName.setText(phase.name)
-        b.etThreshold.setText(phase.thresholdPercent.toString())
         b.etMessage.setText(phase.message)
+
+        // Slider + value label
+        b.sliderThreshold.value = phase.thresholdPercent.toFloat()
+        b.tvThresholdValue.text = "${phase.thresholdPercent}%"
 
         setupColorSwatches(holder, phase)
 
@@ -70,14 +71,16 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
         }
         b.etName.addTextChangedListener(holder.nameWatcher)
 
-        holder.thresholdWatcher = simpleWatcher { s ->
-            val pos = holder.bindingAdapterPosition
-            if (pos != RecyclerView.NO_ID.toInt()) {
-                val v = s.toIntOrNull()?.coerceIn(0, 100) ?: 0
-                phases[pos] = phases[pos].copy(thresholdPercent = v)
+        b.sliderThreshold.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                val pos = holder.bindingAdapterPosition
+                if (pos != RecyclerView.NO_ID.toInt()) {
+                    val v = value.toInt()
+                    phases[pos] = phases[pos].copy(thresholdPercent = v)
+                    b.tvThresholdValue.text = "$v%"
+                }
             }
         }
-        b.etThreshold.addTextChangedListener(holder.thresholdWatcher)
 
         holder.messageWatcher = simpleWatcher { s ->
             val pos = holder.bindingAdapterPosition
