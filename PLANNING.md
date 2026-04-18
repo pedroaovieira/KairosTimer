@@ -42,6 +42,32 @@ Allow the user to import a JSON file that defines a phase per slide, each with i
 
 ---
 
+### Visual Polish — Screenshot-Driven Iteration
+
+The mock screenshots look great but the real app doesn't match them closely enough. Use Claude's vision capability to close the gap iteratively.
+
+**Approach**
+- Build a debug APK and run it on a device or emulator
+- Take a screenshot of the actual app (each key state: setup, running, paused, finished, settings)
+- Share the screenshot with Claude alongside the target mock from `docs/screenshots/`
+- Claude identifies the differences (spacing, font sizes, colours, layout) and proposes code changes
+- Rebuild, screenshot again, repeat until the real app matches the mock
+
+**States to check**
+- Setup screen: headline size, input card proportions, preset pills alignment
+- Running screen: timer digit size, halo glow visibility, progress row, segmented pill sizing and spacing
+- Paused screen: faded digit opacity, RESUME label
+- Finished screen: flash animation, RESET button placement
+- Settings screen: slider track and thumb styling, swatch size and spacing, card padding
+
+**Implementation notes**
+- Use `adb exec-out screencap -p > screen.png` to capture the device screen without needing a UI tool
+- Compare real vs mock side-by-side; the mock is the design target
+- Focus changes on `activity_main.xml` (dimensions, margins) and `MainActivity.kt` (animator params) before touching colours
+- After each round, regenerate the mock screenshot if the design decision changes so they stay in sync
+
+---
+
 ### Fix About Screen — Version and Year
 
 The About screen hardcodes both the app version string and the copyright year. Both are currently wrong.
@@ -66,3 +92,4 @@ The About screen hardcodes both the app version string and the copyright year. B
 ---
 
 *Last updated: 2026-04-19*
+
