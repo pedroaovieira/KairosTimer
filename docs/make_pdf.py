@@ -196,7 +196,7 @@ def inline(text):
 
 body = md_to_html(md)
 
-# ── CSS ──────────────────────────────────────────────────────────────────────
+# ── CSS — Temporal Monolith brand ────────────────────────────────────────────
 css = """
 @page {
     size: A4;
@@ -206,37 +206,39 @@ body {
     font-family: "DejaVu Sans", "Liberation Sans", Arial, sans-serif;
     font-size: 10.5pt;
     line-height: 1.6;
-    color: #212121;
+    color: #1a1a1a;
 }
 h1 {
-    font-size: 22pt; color: #1b5e20;
-    border-bottom: 3px solid #2e7d32;
+    font-size: 22pt; color: #0d0d0d;
+    border-bottom: 3px solid #5AF0B3;
     padding-bottom: 6pt; margin-top: 0; margin-bottom: 4pt;
 }
 h2 {
-    font-size: 15pt; color: #2e7d32;
-    border-bottom: 1px solid #a5d6a7;
+    font-size: 15pt; color: #0d0d0d;
+    border-bottom: 1px solid #5AF0B3;
     padding-bottom: 3pt; margin-top: 20pt; margin-bottom: 6pt;
 }
-h3 { font-size: 12pt; color: #37474f; margin-top: 14pt; margin-bottom: 4pt; }
-h4 { font-size: 11pt; color: #546e7a; margin-top: 10pt; margin-bottom: 2pt; }
+h3 { font-size: 12pt; color: #2a2a2a; margin-top: 14pt; margin-bottom: 4pt; }
+h4 { font-size: 11pt; color: #444444; margin-top: 10pt; margin-bottom: 2pt; }
 p { margin: 4pt 0; }
 code {
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
     border-radius: 3px;
     padding: 1px 5px;
     font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
     font-size: 9pt;
+    color: #003825;
 }
 pre {
-    background: #263238;
-    color: #cfd8dc;
+    background: #1a1a1a;
+    color: #e5e2e1;
     border-radius: 6px;
     padding: 10px 14px;
     font-size: 9pt;
     line-height: 1.5;
     margin: 8pt 0;
+    border-left: 3px solid #5AF0B3;
 }
 pre code { background: none; border: none; padding: 0; color: inherit; }
 
@@ -246,24 +248,25 @@ table {
     width: 100%;
     margin: 8pt 0;
     font-size: 10pt;
-    table-layout: fixed;   /* equal-width columns, prevents overflow */
+    table-layout: fixed;
 }
 th {
-    background: #2e7d32;
-    color: white;
+    background: #1a1a1a;
+    color: #5AF0B3;
     padding: 5pt 8pt;
-    text-align: center;
+    text-align: left;
     font-weight: bold;
     font-size: 10pt;
+    letter-spacing: 0.04em;
 }
 td {
     padding: 5pt 8pt;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e8e8e8;
     vertical-align: top;
     word-wrap: break-word;
 }
 td:first-child { font-weight: 500; }
-tr:nth-child(even) td { background: #f9fbe7; }
+tr:nth-child(even) td { background: #f7faf8; }
 
 /* ── Screenshots ── */
 img.screenshot {
@@ -293,18 +296,18 @@ h2, h3, h4 { clear: both; }
 hr { clear: both; border: none; border-top: 1px solid #e0e0e0; margin: 14pt 0; }
 
 blockquote {
-    border-left: 4px solid #a5d6a7;
-    background: #f1f8e9;
+    border-left: 4px solid #5AF0B3;
+    background: #f4fdf8;
     margin: 8pt 0;
     padding: 6pt 12pt;
     border-radius: 0 6px 6px 0;
     font-style: italic;
-    color: #37474f;
+    color: #2a2a2a;
     clear: both;
 }
 ul, ol { padding-left: 18pt; margin: 4pt 0; }
 li { margin-bottom: 3pt; }
-a { color: #2e7d32; }
+a { color: #003825; }
 """
 
 html = f"""<!DOCTYPE html>
