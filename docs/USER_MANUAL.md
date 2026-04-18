@@ -1,6 +1,6 @@
 # PresentationTimer — User Manual
 
-**Version 1.3.0**
+**Version 1.3.2**
 
 ---
 
@@ -83,7 +83,7 @@ When you first open the app you see the **setup screen**:
 | **TEMPORAL** (top centre) | App brand name |
 | Gear icon (top-right) | Opens the phase settings |
 | **SET THE PACE** headline | Large editorial heading in the centre |
-| **HH : MM : SS** fields | Enter your desired duration |
+| **HH : MM : SS** fields | Enter your desired duration (all fields default to 00) |
 | **INITIALIZE** button | Begins the countdown |
 
 **Enter your time:** Tap each field (HH, MM, SS) and type the number. You only need to fill the fields you use — e.g., type `25` in MM for a 25-minute talk.
@@ -96,12 +96,12 @@ When you first open the app you see the **setup screen**:
 
 While the timer is running:
 
-- The **aura bar** (4 dp strip at the very top) glows the active phase colour.
-- The **status label** below the brand name shows the phase message in the phase colour.
-- The **countdown** is shown in large digits at the centre.
-- The **linear progress bar** below the countdown sweeps down as time passes.
+- The **background** fills with the active phase colour (mint → amber → coral by default).
+- The **status label** below the brand name shows the phase message in large, readable text.
+- The **countdown** is shown in massive digits at the centre.
+- The **linear progress bar** below the countdown depletes as time passes.
 
-Phase colour transitions are animated with a 500 ms cross-fade — smooth and unobtrusive.
+All colours — background, aura bar, progress bar — cross-fade with a 500 ms animation when a phase changes.
 
 **Controls while running:**
 
@@ -114,7 +114,7 @@ Phase colour transitions are animated with a 500 ms cross-fade — smooth and un
 
 ### 4.3 Paused
 
-When paused the aura bar and status label stay the colour of the phase you paused in, and the label changes to **"PAUSED"**. The **Resume** button appears — tap it to continue.
+When paused the background stays the colour of the phase you paused in, and the label changes to **"PAUSED"**. The **▶ RESUME** button appears — tap it to continue.
 
 ---
 
@@ -137,7 +137,7 @@ When the countdown reaches zero:
 
 Tap the **gear icon** in the top-right corner of the setup screen. The phases editor opens.
 
-> The settings button is only visible on the setup screen (not while a timer is running).
+> The settings button is only visible on the setup screen (not while a timer is running). The **ℹ️ About** button is always visible in the top-right of the Settings toolbar.
 
 ---
 
@@ -215,7 +215,7 @@ Phases are sorted by their threshold, highest first. During the timer, the app p
 ## 7. Tips for Presenters
 
 - **Keep it simple:** The default three phases (mint green → amber → coral) work for most talks. Only customise if you have a specific need.
-- **Use the aura bar:** The coloured strip at the top is visible even in bright rooms and from a distance — you don't need to read the digits.
+- **Use the background colour:** The full-screen phase colour is visible even in bright rooms and from a distance — you don't need to read the digits.
 - **Screen brightness:** Turn your phone brightness to maximum before your talk so the accent colour is clearly visible.
 - **Don't cover the screen:** Lay the phone flat or prop it at an angle. The display stays on automatically.
 - **Long presentations:** For talks over an hour, enter the hours in the **HH** field. The time display switches to `H:MM:SS` format automatically.
@@ -225,7 +225,7 @@ Phases are sorted by their threshold, highest first. During the timer, the app p
 
 ## 8. About
 
-Tap the **gear icon** on the setup screen → tap the **⋮ overflow menu** (top-right of the Settings toolbar) → tap **About** to open the About screen.
+Tap the **gear icon** on the setup screen → tap the **ℹ️ icon** in the top-right of the Settings toolbar to open the About screen.
 
 The About screen shows:
 

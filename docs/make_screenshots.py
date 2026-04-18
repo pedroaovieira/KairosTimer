@@ -1,398 +1,361 @@
 #!/usr/bin/env python3
-"""Generate mock screenshots of PresentationTimer for documentation."""
+"""Generate mock screenshots of PresentationTimer — Temporal Monolith design."""
 
 from PIL import Image, ImageDraw, ImageFont
-import math, os
+import os, math
 
-W, H = 390, 844  # ~iPhone-size portrait (works for Android too)
+W, H = 390, 844
 OUT = os.path.join(os.path.dirname(__file__), "screenshots")
 os.makedirs(OUT, exist_ok=True)
 
-# ── colours ─────────────────────────────────────────────────────────────────
-BG_GREEN   = (46,  125, 50)
-BG_YELLOW  = (249, 168, 37)
-BG_RED     = (198, 40,  40)
-WHITE      = (255, 255, 255)
-DARK_TEXT  = (33,  33,  33)
-SEMI_BLACK = (0,   0,   0,  180)
+FONT_DIR = os.path.join(os.path.dirname(__file__), "..", "app", "src", "main", "res", "font")
 
-def hex2rgb(h):
+# ── Colour palette ────────────────────────────────────────────────────────────
+BG_DARK              = (26,  26,  26)   # #1A1A1A
+SURFACE_LOW          = (28,  27,  27)   # #1C1B1B
+SURFACE_HIGH         = (42,  42,  42)   # #2A2A2A
+SURFACE_HIGHEST      = (53,  53,  52)   # #353534
+PRIMARY              = (90,  240, 179)  # #5AF0B3  mint
+ON_PRIMARY           = (0,   56,  37)   # #003825
+SECONDARY            = (255, 185, 95)   # #FFB95F  amber
+TERTIARY             = (255, 202, 197)  # #FFCAC5  coral
+ON_SURFACE           = (229, 226, 225)  # #E5E2E1
+ON_SURFACE_VAR       = (187, 202, 192)  # #BBCAC0
+OUTLINE              = (133, 148, 139)  # #85948B
+OUTLINE_VAR          = (60,  74,  66)   # #3C4A42
+DARK_INK             = (13,  13,  13)   # #0D0D0D
+
+def rgb(h):
     h = h.lstrip('#')
     return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
-# ── font helpers ─────────────────────────────────────────────────────────────
-def font(size, bold=False):
-    candidates = [
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf" if bold else
-        "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
+# ── Font loader (tries project fonts first, then system fallbacks) ────────────
+def font(size, bold=False, family="manrope"):
+    proj = {
+        ("space_grotesk", True):  os.path.join(FONT_DIR, "space_grotesk_bold.ttf"),
+        ("space_grotesk", False): os.path.join(FONT_DIR, "space_grotesk_regular.ttf"),
+        ("manrope",        True):  os.path.join(FONT_DIR, "manrope_bold.ttf"),
+        ("manrope",        False): os.path.join(FONT_DIR, "manrope_regular.ttf"),
+    }
+    system = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold
+        else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold
+        else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
     ]
-    for c in candidates:
-        if os.path.exists(c):
-            return ImageFont.truetype(c, size)
+    candidates = [proj.get((family, bold))] + system
+    for path in candidates:
+        if path and os.path.exists(path):
+            return ImageFont.truetype(path, size)
     return ImageFont.load_default()
 
-def text_center(draw, text, y, fnt, color=WHITE):
-    bbox = draw.textbbox((0, 0), text, font=fnt)
-    tw = bbox[2] - bbox[0]
-    draw.text(((W - tw) // 2, y), text, font=fnt, fill=color)
+def sg(size):  return font(size, bold=True,  family="space_grotesk")
+def mn(size):  return font(size, bold=False, family="manrope")
+def mnb(size): return font(size, bold=True,  family="manrope")
 
-def text_at(draw, text, x, y, fnt, color=WHITE, anchor="la"):
+# ── Drawing helpers ───────────────────────────────────────────────────────────
+def cw(draw, text, y, fnt, color):
+    bb = draw.textbbox((0, 0), text, font=fnt)
+    draw.text(((W - (bb[2]-bb[0])) // 2, y), text, font=fnt, fill=color)
+
+def at(draw, text, x, y, fnt, color, anchor="la"):
     draw.text((x, y), text, font=fnt, fill=color, anchor=anchor)
 
-# ── arc helper ───────────────────────────────────────────────────────────────
-def draw_arc(draw, cx, cy, r, progress, track_color, indicator_color, thickness=14):
-    # Track (full circle)
-    bb = [cx - r, cy - r, cx + r, cy + r]
-    draw.arc(bb, 0, 360, fill=track_color, width=thickness)
-    # Indicator
+def pill(draw, cx, cy, w, h, label, bg, fg, fnt=None):
+    fnt = fnt or mnb(16)
+    x0, y0 = cx - w//2, cy - h//2
+    draw.rounded_rectangle([x0, y0, x0+w, y0+h], radius=h//2, fill=bg)
+    bb = draw.textbbox((0, 0), label, font=fnt)
+    draw.text((x0 + (w-(bb[2]-bb[0]))//2, y0 + (h-(bb[3]-bb[1]))//2),
+              label, font=fnt, fill=fg)
+
+def circle_btn(draw, cx, cy, r, icon, bg, fg, fnt=None):
+    fnt = fnt or sg(22)
+    draw.ellipse([cx-r, cy-r, cx+r, cy+r], fill=bg)
+    bb = draw.textbbox((0, 0), icon, font=fnt)
+    draw.text((cx - (bb[2]-bb[0])//2, cy - (bb[3]-bb[1])//2), icon, font=fnt, fill=fg)
+
+def status_bar(draw, bg, text_color):
+    draw.rectangle([0, 0, W, 40], fill=bg)
+    draw.text((16, 11), "9:41", font=mn(13), fill=text_color)
+    draw.text((W-16, 11), "●●●  WiFi  100%", font=mn(13), fill=text_color, anchor="ra")
+
+def aura_bar(draw, color, y=40):
+    draw.rectangle([0, y, W, y+4], fill=color)
+
+def progress_bar(draw, y, progress, track_color, indicator_color):
+    x0, x1 = 56, W-56
+    draw.rounded_rectangle([x0, y, x1, y+4], radius=2, fill=track_color)
     if progress > 0:
-        angle = 360 * progress / 100
-        draw.arc(bb, -90, -90 + angle, fill=indicator_color, width=thickness)
+        fill_w = int((x1-x0) * progress / 100)
+        draw.rounded_rectangle([x0, y, x0+fill_w, y+4], radius=2, fill=indicator_color)
 
-# ── status bar ───────────────────────────────────────────────────────────────
-def status_bar(draw, bg):
-    draw.rectangle([0, 0, W, 44], fill=bg)
-    f = font(14)
-    text_at(draw, "9:41", 16, 22, f, WHITE)
-    text_at(draw, "●●●●  WiFi  100%", W - 16, 22, f, WHITE, anchor="ra")
-
-# ── gear icon (simplified) ───────────────────────────────────────────────────
-def draw_gear(draw, cx, cy, r=12, color=WHITE):
-    teeth = 8
-    inner_r = r * 0.55
-    for i in range(teeth * 2):
-        angle = math.radians(i * 360 / (teeth * 2))
-        cr = r if i % 2 == 0 else r * 0.80
-        x = cx + cr * math.cos(angle)
-        y = cy + cr * math.sin(angle)
-        draw.ellipse([x - 2, y - 2, x + 2, y + 2], fill=color)
-    draw.ellipse([cx - inner_r, cy - inner_r, cx + inner_r, cy + inner_r],
-                 fill=color)
-    draw.ellipse([cx - inner_r * 0.5, cy - inner_r * 0.5,
-                  cx + inner_r * 0.5, cy + inner_r * 0.5],
-                 fill=(0, 0, 0, 0))
-
-# ── rounded rect helper ──────────────────────────────────────────────────────
-def rounded_rect(draw, x0, y0, x1, y1, r=24, fill=None, outline=None, width=2):
-    draw.rounded_rectangle([x0, y0, x1, y1], radius=r, fill=fill, outline=outline, width=width)
-
-def pill_button(draw, cx, cy, w, h, label, bg, text_color=WHITE, fnt=None):
-    fnt = fnt or font(18, bold=True)
-    x0, y0 = cx - w // 2, cy - h // 2
-    rounded_rect(draw, x0, y0, x0 + w, y0 + h, r=h // 2, fill=bg)
-    bbox = draw.textbbox((0, 0), label, font=fnt)
-    tw = bbox[2] - bbox[0]
-    th = bbox[3] - bbox[1]
-    draw.text((x0 + (w - tw) // 2, y0 + (h - th) // 2), label, font=fnt, fill=text_color)
+def toolbar(draw, title, has_info=False, has_save=False):
+    draw.rectangle([0, 0, W, 72], fill=SURFACE_LOW)
+    at(draw, "←", 20, 20, sg(22), ON_SURFACE)
+    at(draw, title, 56, 22, mnb(18), ON_SURFACE)
+    x = W - 20
+    if has_info:
+        at(draw, "ℹ", x, 22, mnb(20), PRIMARY, anchor="ra")
+        x -= 44
+    if has_save:
+        at(draw, "Save", x, 22, mnb(16), PRIMARY, anchor="ra")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCREEN 1: Setup / home screen
+# SCREEN 1 — Setup
 # ═══════════════════════════════════════════════════════════════════════════════
 def screen_setup():
-    img = Image.new("RGB", (W, H), BG_GREEN)
-    draw = ImageDraw.Draw(img, "RGBA")
-    status_bar(draw, BG_GREEN)
+    img = Image.new("RGB", (W, H), BG_DARK)
+    d = ImageDraw.Draw(img)
+    status_bar(d, BG_DARK, ON_SURFACE_VAR)
+    aura_bar(d, PRIMARY)
 
+    # TEMPORAL brand
+    cw(d, "TEMPORAL", 56, sg(13), PRIMARY)
     # Gear icon top-right
-    draw.ellipse([W - 54, 52, W - 14, 92], fill=(255, 255, 255, 40))
-    draw_gear(draw, W - 34, 72, r=13, color=WHITE)
+    d.ellipse([W-54, 48, W-14, 88], fill=SURFACE_HIGH)
+    at(d, "⚙", W-34, 56, mn(20), ON_SURFACE_VAR, anchor="ma")
 
-    # Phase label
-    text_center(draw, "Set your time", 110, font(18), WHITE)
+    # "SET THE\nPACE" headline
+    cw(d, "SET THE", 200, sg(52), ON_SURFACE)
+    cw(d, "PACE",    252, sg(52), ON_SURFACE)
 
-    # Arc ring
-    cx, cy, arc_r = W // 2, 310, 120
-    draw_arc(draw, cx, cy, arc_r, 100,
-             (0, 0, 0, 50), (165, 214, 167), thickness=16)
-    # Timer text
-    text_center(draw, "00:00", cy - 42, font(64), WHITE)
+    # SESSION DURATION label
+    cw(d, "SESSION DURATION", 330, mnb(10), OUTLINE)
 
-    # Input fields row
-    field_y = 470
-    field_w, field_h = 84, 56
-    labels = ["HH", "MM", "SS"]
-    xs = [W // 2 - 144, W // 2 - 42, W // 2 + 60]
-    for x, lbl in zip(xs, labels):
-        rounded_rect(draw, x, field_y, x + field_w, field_y + field_h,
-                     r=8, fill=(255, 255, 255, 30), outline=WHITE, width=2)
-        text_center_x(draw, lbl, x, x + field_w, field_y + 14, font(14), (255,255,255,180))
-        if lbl != "SS":
-            text_at(draw, ":", x + field_w + 4, field_y + 14, font(26), WHITE)
+    # HH:MM:SS card
+    card_x, card_y, card_h = 40, 356, 92
+    d.rectangle([card_x, card_y, W-card_x, card_y+card_h], fill=SURFACE_LOW)
+    # HH
+    at(d, "HH", 78, card_y+10, mnb(9), OUTLINE)
+    at(d, "00", 76, card_y+24, sg(42), OUTLINE_VAR)
+    # :
+    at(d, ":", 160, card_y+28, sg(34), OUTLINE_VAR)
+    # MM
+    at(d, "MM", 174, card_y+10, mnb(9), OUTLINE)
+    at(d, "00", 172, card_y+24, sg(42), OUTLINE_VAR)
+    # :
+    at(d, ":", 258, card_y+28, sg(34), OUTLINE_VAR)
+    # SS
+    at(d, "SS", 272, card_y+10, mnb(9), OUTLINE)
+    at(d, "00", 270, card_y+24, sg(42), OUTLINE_VAR)
 
-    # Start button
-    pill_button(draw, W // 2, 600, 160, 56, "Start",
-                (0, 0, 0, 180))
+    # INITIALIZE button
+    pill(d, W//2, 560, 220, 56, "INITIALIZE", PRIMARY, ON_PRIMARY, mnb(14))
 
     img.save(os.path.join(OUT, "01_setup.png"))
     print("01_setup.png")
 
-def text_center_x(draw, text, x0, x1, y, fnt, color):
-    bbox = draw.textbbox((0, 0), text, font=fnt)
-    tw = bbox[2] - bbox[0]
-    draw.text((x0 + (x1 - x0 - tw) // 2, y), text, font=fnt, fill=color)
-
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCREEN 2: Timer running – green phase (68% remaining)
+# SCREENS 2-4 — Running phases
 # ═══════════════════════════════════════════════════════════════════════════════
-def screen_running(bg, arc_color, label, time_str, progress, filename):
-    img = Image.new("RGB", (W, H), bg)
-    draw = ImageDraw.Draw(img, "RGBA")
-    status_bar(draw, bg)
+def screen_running(bg_color, label, time_str, progress, filename):
+    img = Image.new("RGB", (W, H), bg_color)
+    d = ImageDraw.Draw(img)
+    status_bar(d, bg_color, DARK_INK)
+    aura_bar(d, DARK_INK)
 
-    text_color = WHITE if sum(bg) / 3 < 180 else DARK_TEXT
+    # TEMPORAL brand
+    cw(d, "TEMPORAL", 56, sg(13), DARK_INK)
 
-    text_center(draw, label, 110, font(18), text_color)
+    # Phase label — big, dark
+    cw(d, label, 118, mnb(20), DARK_INK)
 
-    cx, cy, arc_r = W // 2, 340, 130
-    draw_arc(draw, cx, cy, arc_r, progress,
-             (0, 0, 0, 50), arc_color, thickness=18)
-    text_center(draw, time_str, cy - 46, font(68), text_color)
+    # Large countdown
+    cw(d, time_str, 195, sg(88), DARK_INK)
 
-    # Pause + Reset buttons
-    pill_button(draw, W // 2 - 88, 560, 150, 56, "Pause",  (0, 0, 0, 180))
-    pill_button(draw, W // 2 + 88, 560, 150, 56, "Reset",  (0, 0, 0, 110))
+    # Linear progress bar + label
+    progress_bar(d, 440, progress, (0,0,0,60), DARK_INK)
+    cw(d, "REMAINING", 456, mnb(9), DARK_INK)
+
+    # Buttons: reset (small dark circle left) + pause (large dark circle)
+    circle_btn(d, W//2 - 72, 580, 32, "■", SURFACE_HIGHEST, ON_SURFACE, mn(18))
+    circle_btn(d, W//2,      580, 44, "⏸", DARK_INK,         bg_color,   mn(28))
 
     img.save(os.path.join(OUT, filename))
     print(filename)
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCREEN 5: Finished / time's up
+# SCREEN 5 — Finished
 # ═══════════════════════════════════════════════════════════════════════════════
 def screen_finished():
-    img = Image.new("RGB", (W, H), BG_RED)
-    draw = ImageDraw.Draw(img, "RGBA")
-    status_bar(draw, BG_RED)
+    bg = TERTIARY
+    img = Image.new("RGB", (W, H), bg)
+    d = ImageDraw.Draw(img)
+    status_bar(d, bg, DARK_INK)
+    aura_bar(d, DARK_INK)
 
-    text_center(draw, "Time's up! ⏰", 110, font(22, bold=True), WHITE)
+    cw(d, "TEMPORAL", 56, sg(13), DARK_INK)
+    cw(d, "TIME'S UP", 118, mnb(20), DARK_INK)
+    # Timer text (shown bold/bolder to imply flashing)
+    cw(d, "00:00", 195, sg(88), DARK_INK)
 
-    cx, cy, arc_r = W // 2, 340, 130
-    draw_arc(draw, cx, cy, arc_r, 0, (0, 0, 0, 50), (239, 154, 154), thickness=18)
-    text_center(draw, "00:00", cy - 46, font(68), WHITE)
+    progress_bar(d, 440, 0, (0,0,0,60), DARK_INK)
+    cw(d, "REMAINING", 456, mnb(9), DARK_INK)
 
-    pill_button(draw, W // 2, 560, 160, 56, "Reset", (0, 0, 0, 110))
+    circle_btn(d, W//2, 580, 32, "■", DARK_INK, bg, mn(18))
+
     img.save(os.path.join(OUT, "05_finished.png"))
     print("05_finished.png")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCREEN 6: Settings – phases list
+# SCREEN 6 — Settings (phases list)
 # ═══════════════════════════════════════════════════════════════════════════════
 def screen_settings():
-    img = Image.new("RGB", (W, H), (240, 240, 240))
-    draw = ImageDraw.Draw(img, "RGBA")
-
-    # Toolbar
-    draw.rectangle([0, 0, W, 80], fill=BG_GREEN)
-    text_at(draw, "←", 18, 26, font(24, bold=True), WHITE)
-    text_at(draw, "Timer Phases", 56, 28, font(20, bold=True), WHITE)
-    text_at(draw, "Save", W - 16, 28, font(18, bold=True), WHITE, anchor="ra")
+    img = Image.new("RGB", (W, H), BG_DARK)
+    d = ImageDraw.Draw(img)
+    toolbar(d, "Timer Phases", has_info=True, has_save=True)
 
     phases = [
-        ("#2E7D32", "On track",    "50", "On track 🟢"),
-        ("#F9A825", "Hurry up",    "20", "Hurry up! 🟡"),
-        ("#C62828", "Almost done", "0",  "Almost out of time! 🔴"),
+        ("#5AF0B3", "On track",    "50", "On track"),
+        ("#FFB95F", "Hurry up",    "20", "Hurry up!"),
+        ("#FFCAC5", "Almost done", "0",  "Almost out of time!"),
     ]
 
-    card_y = 96
+    card_y = 84
     for color_hex, name, threshold, message in phases:
-        card_h = 172
-        # Card shadow
-        draw.rounded_rectangle([12, card_y + 3, W - 12, card_y + card_h + 3],
-                                radius=12, fill=(0, 0, 0, 30))
-        # Card body
-        draw.rounded_rectangle([12, card_y, W - 12, card_y + card_h],
-                                radius=12, fill=WHITE)
+        card_h = 100
+        d.rounded_rectangle([14, card_y, W-14, card_y+card_h],
+                             radius=12, fill=SURFACE_HIGH)
+        ph_rgb = rgb(color_hex)
+        # Color dot indicator
+        d.ellipse([28, card_y+16, 28+16, card_y+16+16], fill=ph_rgb)
+        at(d, name,      56, card_y+14, mnb(15), ON_SURFACE)
+        at(d, "🗑",      W-30, card_y+14, mn(16), (239, 83, 80), anchor="ra")
+        at(d, f"Active when ≥ {threshold}% remaining",
+               28, card_y+42, mn(12), OUTLINE)
+        at(d, message,   28, card_y+62, mn(14), ON_SURFACE_VAR)
 
-        # Color bar on left edge
-        rgb = hex2rgb(color_hex)
-        draw.rounded_rectangle([12, card_y, 24, card_y + card_h],
-                                radius=12, fill=rgb)
-        draw.rectangle([12, card_y, 20, card_y + card_h], fill=rgb)
-
-        # Name
-        text_at(draw, name, 32, card_y + 14, font(17, bold=True), DARK_TEXT)
-        # Delete icon
-        text_at(draw, "🗑", W - 28, card_y + 14, font(18), (211, 47, 47), anchor="ra")
-
-        # Threshold row
-        text_at(draw, f"Active when ≥ {threshold}% remaining", 32, card_y + 46, font(13), (100, 100, 100))
-
-        # Message row
-        text_at(draw, message, 32, card_y + 74, font(14), DARK_TEXT)
-
-        # Color swatches (small row)
-        text_at(draw, "Color:", 32, card_y + 106, font(12), (100, 100, 100))
-        swatch_colors = ["#1B5E20","#2E7D32","#66BB6A","#F9A825","#E65100","#C62828","#EF5350","#1565C0","#6A1B9A"]
-        sx = 80
-        for sc in swatch_colors:
-            sc_rgb = hex2rgb(sc)
-            draw.ellipse([sx, card_y + 104, sx + 22, card_y + 126], fill=sc_rgb)
+        # Color swatches (small strip)
+        sx = 28
+        swatches = ["#5AF0B3","#FFB95F","#FFCAC5","#34D399","#60A5FA","#F87171","#A78BFA"]
+        for sc in swatches:
+            sr = rgb(sc)
+            d.ellipse([sx, card_y+80, sx+16, card_y+96], fill=sr)
             if sc == color_hex:
-                draw.ellipse([sx - 2, card_y + 102, sx + 24, card_y + 128],
-                             outline=WHITE, width=2)
-            sx += 28
+                d.ellipse([sx-2, card_y+78, sx+18, card_y+98],
+                          outline=ON_SURFACE, width=2)
+            sx += 22
 
-        card_y += card_h + 10
+        card_y += card_h + 8
 
     # FAB
-    fab_cx, fab_cy = W - 36, H - 60
-    draw.ellipse([fab_cx - 28, fab_cy - 28, fab_cx + 28, fab_cy + 28], fill=BG_GREEN)
-    text_at(draw, "+", fab_cx, fab_cy - 14, font(36, bold=True), WHITE, anchor="ma")
+    d.ellipse([W-64, H-80, W-16, H-32], fill=PRIMARY)
+    cw_fab = W - 40
+    at(d, "+", cw_fab, H-68, sg(28), ON_PRIMARY, anchor="ma")
 
     img.save(os.path.join(OUT, "06_settings.png"))
     print("06_settings.png")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCREEN 7: Settings – adding a new phase (color picker focused)
+# SCREEN 7 — Settings (adding a phase)
 # ═══════════════════════════════════════════════════════════════════════════════
 def screen_settings_add():
-    img = Image.new("RGB", (W, H), (240, 240, 240))
-    draw = ImageDraw.Draw(img, "RGBA")
+    img = Image.new("RGB", (W, H), BG_DARK)
+    d = ImageDraw.Draw(img)
+    toolbar(d, "Timer Phases", has_info=True, has_save=True)
 
-    draw.rectangle([0, 0, W, 80], fill=BG_GREEN)
-    text_at(draw, "←", 18, 26, font(24, bold=True), WHITE)
-    text_at(draw, "Timer Phases", 56, 28, font(20, bold=True), WHITE)
-    text_at(draw, "Save", W - 16, 28, font(18, bold=True), WHITE, anchor="ra")
+    # Existing phase (condensed)
+    d.rounded_rectangle([14, 84, W-14, 154], radius=12, fill=SURFACE_HIGH)
+    d.ellipse([28, 100, 44, 116], fill=PRIMARY)
+    at(d, "On track", 56, 98, mnb(15), ON_SURFACE)
+    at(d, "≥ 50% remaining · \"On track\"", 56, 122, mn(12), OUTLINE)
 
-    # One existing card (abbreviated)
-    draw.rounded_rectangle([12, 92, W - 12, 170], radius=12, fill=WHITE)
-    rgb = hex2rgb("#2E7D32")
-    draw.rounded_rectangle([12, 92, 24, 170], radius=12, fill=rgb)
-    draw.rectangle([12, 92, 20, 170], fill=rgb)
-    text_at(draw, "On track  ≥ 50%", 32, 106, font(15, bold=True), DARK_TEXT)
-    text_at(draw, 'Message: "On track 🟢"', 32, 134, font(13), (100, 100, 100))
-
-    # New phase card (expanded/highlighted)
-    card_y = 184
-    card_h = 380
-    draw.rounded_rectangle([12, card_y + 3, W - 12, card_y + card_h + 3],
-                            radius=12, fill=(0, 0, 0, 25))
-    draw.rounded_rectangle([12, card_y, W - 12, card_y + card_h],
-                            radius=14, fill=WHITE,
-                            outline=(25, 118, 210), width=2)
-
-    rgb_blue = hex2rgb("#1565C0")
-    draw.rounded_rectangle([12, card_y, 24, card_y + card_h], radius=12, fill=rgb_blue)
-    draw.rectangle([12, card_y, 20, card_y + card_h], fill=rgb_blue)
+    # New phase card (highlighted with primary border)
+    card_y, card_h = 162, 380
+    d.rounded_rectangle([14, card_y, W-14, card_y+card_h],
+                         radius=12, fill=SURFACE_HIGH, outline=PRIMARY, width=2)
 
     # Name field
-    text_at(draw, "Phase name", 32, card_y + 14, font(12), (100, 100, 100))
-    draw.rounded_rectangle([30, card_y + 34, W - 30, card_y + 78],
-                            radius=6, outline=(100, 100, 100), width=1)
-    text_at(draw, "New phase", 42, card_y + 46, font(16), DARK_TEXT)
+    d.rounded_rectangle([28, card_y+14, W-28, card_y+56],
+                         radius=6, fill=SURFACE_LOW, outline=OUTLINE_VAR, width=1)
+    at(d, "Phase name", 36, card_y+8, mn(11), OUTLINE)
+    at(d, "New phase",  36, card_y+26, mn(15), ON_SURFACE)
 
     # Threshold field
-    text_at(draw, "Active when ≥ X% remaining (0–100)", 32, card_y + 90, font(12), (100, 100, 100))
-    draw.rounded_rectangle([30, card_y + 108, W - 30, card_y + 152],
-                            radius=6, outline=(100, 100, 100), width=1)
-    text_at(draw, "10", 42, card_y + 120, font(16), DARK_TEXT)
+    d.rounded_rectangle([28, card_y+68, W-28, card_y+110],
+                         radius=6, fill=SURFACE_LOW, outline=OUTLINE_VAR, width=1)
+    at(d, "Active when ≥ X% remaining (0–100)", 36, card_y+62, mn(11), OUTLINE)
+    at(d, "10",  36, card_y+80, mn(15), ON_SURFACE)
 
     # Message field
-    text_at(draw, "Message shown during this phase", 32, card_y + 164, font(12), (100, 100, 100))
-    draw.rounded_rectangle([30, card_y + 182, W - 30, card_y + 226],
-                            radius=6, outline=(100, 100, 100), width=1)
-    text_at(draw, "New phase", 42, card_y + 194, font(16), DARK_TEXT)
+    d.rounded_rectangle([28, card_y+122, W-28, card_y+164],
+                         radius=6, fill=SURFACE_LOW, outline=OUTLINE_VAR, width=1)
+    at(d, "Message shown during this phase", 36, card_y+116, mn(11), OUTLINE)
+    at(d, "New phase", 36, card_y+134, mn(15), ON_SURFACE)
 
-    # Color picker label
-    text_at(draw, "Background color", 32, card_y + 238, font(12), (100, 100, 100))
+    # Color label
+    at(d, "BACKGROUND COLOR", 28, card_y+176, mnb(9), OUTLINE)
 
     # Color swatches
-    swatch_colors = [
-        "#1B5E20","#2E7D32","#66BB6A",
-        "#F9A825","#E65100","#FF6D00",
-        "#B71C1C","#C62828","#EF5350",
-        "#1565C0","#0D47A1","#6A1B9A",
-        "#37474F","#00695C","#4E342E",
-    ]
-    sx = 30
-    sy = card_y + 258
-    selected = "#1565C0"
-    for i, sc in enumerate(swatch_colors):
-        sc_rgb = hex2rgb(sc)
-        draw.ellipse([sx, sy, sx + 30, sy + 30], fill=sc_rgb)
+    swatches = ["#5AF0B3","#FFB95F","#FFCAC5","#34D399","#60A5FA",
+                "#F87171","#A78BFA","#34D399","#FBBF24","#FB923C"]
+    sx, sy = 28, card_y+198
+    selected = "#60A5FA"
+    for sc in swatches:
+        sr = rgb(sc)
+        d.ellipse([sx, sy, sx+28, sy+28], fill=sr)
         if sc == selected:
-            draw.ellipse([sx - 3, sy - 3, sx + 33, sy + 33],
-                         outline=WHITE, width=3)
-            draw.ellipse([sx - 5, sy - 5, sx + 35, sy + 35],
-                         outline=(25, 118, 210), width=2)
-        sx += 38
-        if sx + 38 > W - 20:
-            sx = 30
-            sy += 38
+            d.ellipse([sx-3, sy-3, sx+31, sy+31], outline=ON_SURFACE, width=2)
+        sx += 36
+        if sx + 36 > W - 14:
+            sx, sy = 28, sy + 36
 
     img.save(os.path.join(OUT, "07_settings_add.png"))
     print("07_settings_add.png")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SCREEN 8: About screen
+# SCREEN 8 — About
 # ═══════════════════════════════════════════════════════════════════════════════
 def screen_about():
-    img = Image.new("RGB", (W, H), (250, 250, 250))
-    draw = ImageDraw.Draw(img, "RGBA")
+    img = Image.new("RGB", (W, H), BG_DARK)
+    d = ImageDraw.Draw(img)
+    toolbar(d, "About")
 
-    # Toolbar
-    draw.rectangle([0, 0, W, 80], fill=BG_GREEN)
-    text_at(draw, "←", 18, 26, font(24, bold=True), WHITE)
-    text_at(draw, "About", 56, 28, font(20, bold=True), WHITE)
+    # App icon
+    ic_cx, ic_cy = W//2, 180
+    d.ellipse([ic_cx-40, ic_cy-40, ic_cx+40, ic_cy+40], fill=SURFACE_HIGH)
+    d.arc([ic_cx-24, ic_cy-28, ic_cx+24, ic_cy+20], 0, 360, fill=PRIMARY, width=4)
+    d.line([ic_cx, ic_cy-4, ic_cx, ic_cy-20], fill=PRIMARY, width=3)
+    d.line([ic_cx, ic_cy-4, ic_cx+14, ic_cy+6], fill=PRIMARY, width=3)
 
-    # App icon (circular green background with timer icon)
-    ic_cx, ic_cy = W // 2, 190
-    ic_r = 46
-    draw.ellipse([ic_cx - ic_r, ic_cy - ic_r, ic_cx + ic_r, ic_cy + ic_r],
-                 fill=hex2rgb("#1B5E20"))
-    # Timer circle inside icon
-    tr = 30
-    draw.arc([ic_cx - tr, ic_cy - tr - 4, ic_cx + tr, ic_cy + tr - 4],
-             0, 360, fill=WHITE, width=4)
-    draw.line([ic_cx, ic_cy - 4, ic_cx, ic_cy - 18], fill=WHITE, width=3)
-    draw.line([ic_cx, ic_cy - 4, ic_cx + 12, ic_cy + 4], fill=WHITE, width=3)
-
-    # App name
-    text_center(draw, "PresentationTimer", 255, font(22, bold=True), hex2rgb("#1B5E20"))
-    text_center(draw, "Version 1.2.0", 287, font(14), (117, 117, 117))
-    text_center(draw, "Full-screen countdown for presenters", 312, font(13), (55, 71, 79))
+    # Brand + version
+    cw(d, "TEMPORAL",                        238, sg(28),  PRIMARY)
+    cw(d, "Version 1.3.2",                   280, mn(13),  OUTLINE)
+    cw(d, "Full-screen countdown for presenters", 304, mn(14), ON_SURFACE_VAR)
 
     # Divider
-    div_x = W // 2
-    draw.rectangle([div_x - 36, 342, div_x + 36, 344], fill=hex2rgb("#A5D6A7"))
+    d.rectangle([W//2-24, 336, W//2+24, 338], fill=OUTLINE_VAR)
 
-    # "DEVELOPED BY"
-    text_center(draw, "DEVELOPED BY", 360, font(11, bold=True), (158, 158, 158))
+    cw(d, "DEVELOPED BY", 354, mnb(10), OUTLINE)
 
-    # Pedro card
-    def dev_card(y, initials, name, role, circle_color):
-        draw.rounded_rectangle([16, y, W - 16, y + 72], radius=12, fill=WHITE)
-        draw.rounded_rectangle([16, y + 2, 16 + 3, y + 70], radius=2,
-                                fill=hex2rgb(circle_color))
-        # Avatar circle
-        ax, ay = 52, y + 36
-        draw.ellipse([ax - 22, ay - 22, ax + 22, ay + 22],
-                     fill=hex2rgb(circle_color))
-        text_at(draw, initials, ax, ay - 8, font(14, bold=True), WHITE, anchor="ma")
-        # Text
-        text_at(draw, name, 84, y + 14, font(16, bold=True), DARK_TEXT)
-        text_at(draw, role, 84, y + 40, font(13), (117, 117, 117))
+    def dev_card(y, initials, name, role, dot_color):
+        d.rounded_rectangle([16, y, W-16, y+72], radius=12, fill=SURFACE_HIGH)
+        d.ellipse([30, y+14, 74, y+58], fill=dot_color)
+        at(d, initials, 52, y+24, sg(15), BG_DARK, anchor="ma")
+        at(d, name,  86, y+14, mnb(15), ON_SURFACE)
+        at(d, role,  86, y+38, mn(12),  OUTLINE)
 
-    dev_card(382, "PV", "Pedro Vieira",  "App Developer",              "#2E7D32")
-    dev_card(464, "AI", "Claude.ai",     "AI Partner · Anthropic",     "#CC785C")
+    dev_card(376, "PV", "Pedro Vieira", "App Developer",            PRIMARY)
+    dev_card(458, "AI", "Claude.ai",    "AI Development Partner · Anthropic", rgb("#CC785C"))
 
-    # License
-    text_center(draw, "Open Source · MIT License", 554, font(13), (158, 158, 158))
-    text_center(draw, "© 2025 Pedro Vieira",        576, font(13), (158, 158, 158))
+    # Website
+    cw(d, "pedrov.org", 548, mnb(14), PRIMARY)
+
+    # License / copyright
+    cw(d, "Open Source · MIT License", 580, mn(12), OUTLINE)
+    cw(d, "© 2025 Pedro Vieira",       600, mn(12), OUTLINE)
 
     img.save(os.path.join(OUT, "08_about.png"))
     print("08_about.png")
 
-# ── run all ──────────────────────────────────────────────────────────────────
+# ── Run all ───────────────────────────────────────────────────────────────────
 screen_setup()
-screen_running(BG_GREEN, (165, 214, 167), "On track 🟢", "18:24", 68, "02_green.png")
-screen_running(BG_YELLOW, (255, 241, 118), "Hurry up! 🟡", "06:10", 37, "03_yellow.png")
-screen_running(BG_RED,   (239, 154, 154), "Almost out of time! 🔴", "01:42", 12, "04_red.png")
+screen_running(PRIMARY,   "ON TRACK",           "18:24", 68, "02_green.png")
+screen_running(SECONDARY, "HURRY UP!",           "06:10", 37, "03_yellow.png")
+screen_running(TERTIARY,  "ALMOST OUT OF TIME!", "01:42", 12, "04_red.png")
 screen_finished()
 screen_settings()
 screen_settings_add()
 screen_about()
-print("Done — all screenshots in docs/screenshots/")
+print("\nDone — screenshots in docs/screenshots/")
