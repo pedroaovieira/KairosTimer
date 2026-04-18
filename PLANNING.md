@@ -42,6 +42,20 @@ Allow the user to import a JSON file that defines a phase per slide, each with i
 
 ---
 
+### Fix About Screen — Version and Year
+
+The About screen hardcodes both the app version string and the copyright year. Both are currently wrong.
+
+- **Version:** shown as `1.3.2` — should reflect the current release (`1.4.0`) and ideally be sourced from `BuildConfig.VERSION_NAME` so it never drifts again
+- **Year:** copyright shows `© 2025` — should be `© 2026`
+
+**Implementation notes**
+- In `AboutActivity`, replace the hardcoded version `TextView` with `BuildConfig.VERSION_NAME`
+- Update copyright string to `© 2026 Pedro Vieira` (or make it dynamic with `Calendar.getInstance().get(Calendar.YEAR)`)
+- Update the version in `docs/make_screenshots.py` (`screen_about`) to match
+
+---
+
 ## Ideas / Wishlist
 
 - **Export phases as JSON** — let users back up and share their phase configurations
@@ -51,4 +65,4 @@ Allow the user to import a JSON file that defines a phase per slide, each with i
 
 ---
 
-*Last updated: 2026-04-18*
+*Last updated: 2026-04-19*
