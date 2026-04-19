@@ -29,9 +29,9 @@ data class PhaseConfig(
         )
 
         val defaults = listOf(
-            PhaseConfig(name = "On track",    thresholdPercent = 50, colorHex = "#2E7D32", message = "On track \uD83D\uDFE2"),
-            PhaseConfig(name = "Hurry up",    thresholdPercent = 20, colorHex = "#F9A825", message = "Hurry up! \uD83D\uDFE1"),
-            PhaseConfig(name = "Almost done", thresholdPercent = 0,  colorHex = "#C62828", message = "Almost out of time! \uD83D\uDD34")
+            PhaseConfig(name = "On track",    thresholdPercent = 50, colorHex = "#5AF0B3", message = "On track"),
+            PhaseConfig(name = "Hurry up",    thresholdPercent = 20, colorHex = "#FFB95F", message = "Hurry up!"),
+            PhaseConfig(name = "Almost done", thresholdPercent = 0,  colorHex = "#FFCAC5", message = "Almost out of time!")
         )
 
         fun listToJson(phases: List<PhaseConfig>): String {

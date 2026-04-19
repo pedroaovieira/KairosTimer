@@ -42,7 +42,7 @@ Allow the user to import a JSON file that defines a phase per slide, each with i
 
 ---
 
-### Visual Polish — Screenshot-Driven Iteration
+### ✅ Visual Polish — Screenshot-Driven Iteration *(completed 2026-04-19)*
 
 The mock screenshots look great but the real app doesn't match them closely enough. Use Claude's vision capability to close the gap iteratively.
 
@@ -68,7 +68,7 @@ The mock screenshots look great but the real app doesn't match them closely enou
 
 ---
 
-### Fix About Screen — Version and Year
+### ✅ Fix About Screen — Version and Year *(completed 2026-04-19)*
 
 The About screen hardcodes both the app version string and the copyright year. Both are currently wrong.
 
@@ -79,6 +79,31 @@ The About screen hardcodes both the app version string and the copyright year. B
 - In `AboutActivity`, replace the hardcoded version `TextView` with `BuildConfig.VERSION_NAME`
 - Update copyright string to `© 2026 Pedro Vieira` (or make it dynamic with `Calendar.getInstance().get(Calendar.YEAR)`)
 - Update the version in `docs/make_screenshots.py` (`screen_about`) to match
+
+---
+
+### App Name
+
+The current name "PresentationTimer" is functional but generic. "TEMPORAL" (the in-app brand shown on screen) is already more distinctive and memorable — worth considering as the official name.
+
+**Questions to settle**
+- Should the app name match the on-screen brand (`TEMPORAL`) for consistency?
+- Is "TEMPORAL" too abstract for discoverability on the Play Store?
+- Alternative directions: a name that evokes the presenter experience rather than the tool itself
+
+**Candidate names to explore**
+- **Temporal** — already used in-app; clean, distinctive, slightly abstract
+- **Podium** — evokes the presenter context
+- **Cue** — short, implies a stage/performance signal
+- **Pace** — echoes the "SET THE PACE" headline already in the UI
+- **Spotlight** — suggests being on stage
+
+**What a name change touches**
+- `applicationId` in `build.gradle` (package rename)
+- App label in `AndroidManifest.xml`
+- Play Store listing title and description
+- GitHub repo name / README
+- `docs/` references and user manual
 
 ---
 

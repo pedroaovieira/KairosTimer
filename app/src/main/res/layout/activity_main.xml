@@ -58,7 +58,7 @@
         android:gravity="center"
         android:paddingHorizontal="32dp"
         app:layout_constraintTop_toBottomOf="@id/tvAppName"
-        app:layout_constraintBottom_toTopOf="@id/buttonRow"
+        app:layout_constraintBottom_toTopOf="@id/btnStart"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -156,7 +156,7 @@
             android:layout_marginBottom="10dp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center">
@@ -164,32 +164,34 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPreset5"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="36dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="5 min"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textColor="@color/on_surface_variant"
                 android:fontFamily="@font/manrope"
                 android:textStyle="bold"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="0dp"
                 app:strokeColor="@color/outline_variant"
                 app:cornerRadius="18dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPreset15"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="36dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="15 min"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textColor="@color/on_surface_variant"
                 android:fontFamily="@font/manrope"
                 android:textStyle="bold"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="0dp"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/outline_variant"
                 app:cornerRadius="18dp" />
@@ -197,16 +199,17 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPreset25"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="36dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="25 min"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textColor="@color/on_surface_variant"
                 android:fontFamily="@font/manrope"
                 android:textStyle="bold"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="0dp"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/outline_variant"
                 app:cornerRadius="18dp" />
@@ -214,16 +217,17 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPreset45"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="36dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="45 min"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textColor="@color/on_surface_variant"
                 android:fontFamily="@font/manrope"
                 android:textStyle="bold"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="0dp"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/outline_variant"
                 app:cornerRadius="18dp" />
@@ -245,7 +249,7 @@
         android:textStyle="bold"
         android:letterSpacing="0.1"
         android:visibility="gone"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintTop_toBottomOf="@id/tvAppName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -258,8 +262,8 @@
         android:background="@drawable/circle_halo"
         android:visibility="gone"
         android:alpha="0.0"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/tvPhaseLabel"
-        app:layout_constraintBottom_toTopOf="@id/progressRow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -275,8 +279,8 @@
         android:fontFamily="@font/space_grotesk"
         android:letterSpacing="-0.04"
         android:visibility="gone"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/tvPhaseLabel"
-        app:layout_constraintBottom_toTopOf="@id/progressRow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="18:42" />
@@ -289,9 +293,9 @@
         android:orientation="vertical"
         android:gravity="center"
         android:layout_marginHorizontal="64dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="24dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/buttonRow"
+        app:layout_constraintTop_toBottomOf="@id/tvTimer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -340,15 +344,36 @@
 
     </LinearLayout>
 
-    <!-- ── BUTTON ROW ─────────────────────────────────────────────────── -->
+    <!-- INITIALIZE — setup only, pinned to bottom of screen -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStart"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="INITIALIZE"
+        android:textColor="@color/on_primary"
+        android:textSize="13sp"
+        android:fontFamily="@font/manrope"
+        android:textStyle="bold"
+        android:letterSpacing="0.12"
+        android:paddingHorizontal="40dp"
+        android:layout_marginBottom="52dp"
+        app:backgroundTint="@color/primary"
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ── BUTTON ROW — follows progressRow (running / paused / finished) -->
     <LinearLayout
         android:id="@+id/buttonRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="52dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@id/progressRow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -405,23 +430,6 @@
                 app:iconTint="@color/on_surface" />
 
         </LinearLayout>
-
-        <!-- INITIALIZE / RESUME pill — shown in SETUP and (fallback) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStart"
-            android:layout_width="wrap_content"
-            android:layout_height="56dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:text="INITIALIZE"
-            android:textColor="@color/on_primary"
-            android:textSize="13sp"
-            android:fontFamily="@font/manrope"
-            android:textStyle="bold"
-            android:letterSpacing="0.12"
-            android:paddingHorizontal="40dp"
-            app:backgroundTint="@color/primary"
-            app:cornerRadius="28dp" />
 
         <!-- Standalone RESET — shown only in FINISHED -->
         <com.google.android.material.button.MaterialButton

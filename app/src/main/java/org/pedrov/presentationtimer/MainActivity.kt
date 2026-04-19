@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import androidx.core.graphics.ColorUtils
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -169,8 +170,9 @@ class MainActivity : AppCompatActivity() {
             currentAuraColor = targetAccent
         }
 
-        // Halo colour tracks the phase
-        (binding.haloView.background as? GradientDrawable)?.setColor(phaseColor)
+        // Halo: blend phase colour 60% toward white so it's visible against the phase background
+        val haloColor = ColorUtils.blendARGB(phaseColor, Color.WHITE, 0.6f)
+        (binding.haloView.background as? GradientDrawable)?.setColor(haloColor)
 
         // Text colours
         val textColor    = if (isActive) darkInk else Color.parseColor("#E5E2E1")
