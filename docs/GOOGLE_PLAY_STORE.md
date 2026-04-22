@@ -217,7 +217,7 @@ Google Play **requires a privacy policy URL** for all apps. Publish a privacy po
 
 **Kairos Timer — Privacy Policy**
 
-*Last updated: April 2025*
+*Last updated: April 2026*
 
 **Kairos Timer** ("the App") is developed by Pedro Vieira ("Developer").
 
@@ -243,14 +243,16 @@ Any future changes to this policy will be reflected in an updated version of thi
 
 **Contact**
 
-For questions, contact: pvieira.uminho@gmail.com
+For questions, contact: pedroaovieira@gmail.com
 
 ---
 
-**Where to host the privacy policy:**
-- Create a GitHub Pages site for the repo (`pedroaovieira.github.io/KairosTimer/privacy`)
-- Or use a free service like [privacypolicygenerator.info](https://privacypolicygenerator.info)
-- Or add a `docs/privacy_policy.md` and enable GitHub Pages on the repo
+**Privacy Policy URL:**
+```
+https://pedroaovieira.github.io/KairosTimer/privacy_policy
+```
+
+Hosted on GitHub Pages from `docs/privacy_policy.md`.
 
 ---
 
@@ -356,7 +358,7 @@ android {
 - [ ] Upload phone screenshots (at least 2, up to 8)
 - [ ] Category: Tools
 - [ ] Tags: (copy from Section 1)
-- [ ] Email address: pvieira.uminho@gmail.com
+- [ ] Email address: pedroaovieira@gmail.com
 
 ### App Content
 - [ ] Complete content rating questionnaire (answers in Section 4)
@@ -367,7 +369,7 @@ android {
 ### Release
 - [ ] Create a new release in **Production** track
 - [ ] Upload signed `.aab` file
-- [ ] Enter release name: `1.3.0`
+- [ ] Enter release name: `1.4.1`
 - [ ] Enter release notes (what's new)
 - [ ] Review and roll out to 100%
 
