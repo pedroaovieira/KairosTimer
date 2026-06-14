@@ -1,6 +1,7 @@
 package org.pedrov.kairostimer
 
 import android.animation.ValueAnimator
+import java.util.Locale
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -124,9 +125,9 @@ class MainActivity : AppCompatActivity() {
         val seconds = totalSecs % 60
 
         binding.tvTimer.text = if (hours > 0) {
-            String.format("%d:%02d:%02d", hours, minutes, seconds)
+            String.format(Locale.US, "%d:%02d:%02d", hours, minutes, seconds)
         } else {
-            String.format("%02d:%02d", minutes, seconds)
+            String.format(Locale.US, "%02d:%02d", minutes, seconds)
         }
 
         val progress = if (state.totalSeconds > 0) {
