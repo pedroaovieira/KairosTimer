@@ -11,4 +11,13 @@
     <string name="btn_resume">Resume</string>
     <string name="btn_pause">Pause</string>
     <string name="btn_reset">Reset</string>
+
+    <!-- Timer UI labels -->
+    <string name="label_initialize">INITIALIZE</string>
+    <string name="label_pause">PAUSE</string>
+    <string name="label_resume">▶  RESUME</string>
+    <string name="label_ready">READY</string>
+    <string name="label_on_track">ON TRACK</string>
+    <string name="label_paused">PAUSED</string>
+    <string name="label_times_up">TIME\'S UP</string>
 </resources>
