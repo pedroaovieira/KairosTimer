@@ -293,39 +293,34 @@ export ANDROID_HOME=~/android-dev/android-sdk
 # Output: app/build/outputs/bundle/release/app-release.aab
 ```
 
-**Signing:** You must sign the release build with a keystore. Generate one with:
+**Signing:** Credentials are read from `keystore.properties` (gitignored) at the repo root. Copy the template and fill in real values:
 
 ```bash
-keytool -genkey -v \
-  -keystore presentation_timer.jks \
-  -alias presentation_timer \
-  -keyalg RSA -keysize 2048 \
-  -validity 10000
+cp keystore.properties.template keystore.properties
+# edit keystore.properties with your password
 ```
 
-Then configure signing in `app/build.gradle`:
+The keystore file is `kairostimer_release.jks` at the repo root (also gitignored). Store the password in a password manager — it should exist nowhere else.
 
-```groovy
-android {
-    signingConfigs {
-        release {
-            storeFile file("presentation_timer.jks")
-            storePassword "YOUR_STORE_PASSWORD"
-            keyAlias "presentation_timer"
-            keyPassword "YOUR_KEY_PASSWORD"
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-}
+### Rotating the keystore password
+
+The keystore is **PKCS12 format**, which uses a single password for both the store and the key entry. Only the `-storepasswd` step is needed; `-keypasswd` is not supported on PKCS12 and will error — ignore that.
+
+```bash
+export JAVA_HOME=~/android-dev/jdk-17.0.10+7
+
+# Change the store password (this is the only step needed for PKCS12)
+$JAVA_HOME/bin/keytool -storepasswd -keystore kairostimer_release.jks
+# prompts: current password → new password
 ```
 
-> **Important:** Never commit your keystore or passwords to the repository. Add `*.jks` to `.gitignore`.
+After changing, update **both** `storePassword` and `keyPassword` in `keystore.properties` to the new value (they must match in PKCS12). Then verify signing still works:
+
+```bash
+./gradlew bundleRelease
+```
+
+> **Important:** Never commit `keystore.properties` or `kairostimer_release.jks`. Both are in `.gitignore`. Keep the password only in your password manager.
 
 ---
 
