@@ -1,8 +1,8 @@
 # Kairos Timer — Google Play Store Submission Guide
 
-**App version:** 1.4.1  
+**App version:** 1.5.0  
 **Package name:** `org.pedrov.kairostimer`  
-**Prepared:** April 2026
+**Prepared:** June 2026
 
 ---
 
@@ -274,9 +274,9 @@ Hosted on GitHub Pages from `docs/privacy_policy.md`.
 |---|---|
 | Package name | `org.pedrov.kairostimer` |
 | Minimum SDK | Android 8.0 (API 26) |
-| Target SDK | Android 14 (API 34) |
-| Version code | 6 |
-| Version name | 1.4.1 |
+| Target SDK | Android 15 (API 35) |
+| Version code | 8 |
+| Version name | 1.5.0 |
 | Screen orientation | Portrait only |
 | Architecture | Universal (arm64-v8a, armeabi-v7a, x86_64) |
 
@@ -369,15 +369,18 @@ android {
 ### Release
 - [ ] Create a new release in **Production** track
 - [ ] Upload signed `.aab` file
-- [ ] Enter release name: `1.4.1`
+- [ ] Enter release name: `1.5.0`
 - [ ] Enter release notes (what's new)
 - [ ] Review and roll out to 100%
 
 ### Release Notes (What's New)
 ```
-v1.4.1 — Kairos Timer
-• Fixed app name display throughout UI — now consistently shows as "KAIROS TIMER"
-• All brand name references updated to reflect project rename
+v1.5.0 — Kairos Timer
+• R8 minification enabled — smaller, faster app
+• Colour and string resources moved to XML — better maintainability
+• RecyclerView position guard corrected in phase editor
+• Backup disabled (no sensitive data to back up)
+• Internal code quality improvements from code review
 ```
 
 ---

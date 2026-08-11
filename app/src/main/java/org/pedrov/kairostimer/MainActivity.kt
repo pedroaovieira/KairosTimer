@@ -1,6 +1,7 @@
 package org.pedrov.kairostimer
 
 import android.animation.ValueAnimator
+import java.util.Locale
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -28,11 +29,11 @@ class MainActivity : AppCompatActivity() {
     private var bgAnimator: ValueAnimator? = null
     private var haloAnimator: ValueAnimator? = null
 
-    private var currentAuraColor: Int = Color.parseColor("#5AF0B3")
-    private var currentBgColor: Int = Color.parseColor("#1A1A1A")
+    private var currentAuraColor: Int = 0
+    private var currentBgColor: Int = 0
 
-    private val darkInk = Color.parseColor("#0D0D0D")
-    private val darkBg  = Color.parseColor("#1A1A1A")
+    private val darkInk by lazy { getColor(R.color.dark_ink) }
+    private val darkBg  by lazy { getColor(R.color.background) }
 
     private val settingsLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -45,6 +46,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        currentAuraColor = getColor(R.color.primary)
+        currentBgColor   = getColor(R.color.background)
 
         repository = PhasesRepository(this)
         viewModel.phases = repository.loadPhases()
@@ -124,9 +128,9 @@ class MainActivity : AppCompatActivity() {
         val seconds = totalSecs % 60
 
         binding.tvTimer.text = if (hours > 0) {
-            String.format("%d:%02d:%02d", hours, minutes, seconds)
+            String.format(Locale.US, "%d:%02d:%02d", hours, minutes, seconds)
         } else {
-            String.format("%02d:%02d", minutes, seconds)
+            String.format(Locale.US, "%02d:%02d", minutes, seconds)
         }
 
         val progress = if (state.totalSeconds > 0) {
@@ -138,8 +142,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateAccentColor(state: TimerState) {
-        val colorHex   = state.activePhase?.colorHex ?: "#5AF0B3"
-        val phaseColor = Color.parseColor(colorHex)
+        val phaseColor = state.activePhase?.let { Color.parseColor(it.colorHex) }
+            ?: getColor(R.color.primary)
         val isActive   = state.phase != TimerPhase.SETUP
 
         // Root background
@@ -175,7 +179,7 @@ class MainActivity : AppCompatActivity() {
         (binding.haloView.background as? GradientDrawable)?.setColor(haloColor)
 
         // Text colours
-        val textColor    = if (isActive) darkInk else Color.parseColor("#E5E2E1")
+        val textColor    = if (isActive) darkInk else getColor(R.color.on_surface)
         val labelColor   = if (isActive) darkInk else phaseColor
         binding.tvTimer.setTextColor(textColor)
         binding.tvPhaseLabel.setTextColor(labelColor)
@@ -184,9 +188,9 @@ class MainActivity : AppCompatActivity() {
 
         // Segmented button tints on phase background
         val pauseBg   = if (isActive) darkInk else phaseColor
-        val pauseFg   = if (isActive) phaseColor else Color.parseColor("#003825")
-        val stopBg    = if (isActive) Color.parseColor("#1A1A1A") else Color.parseColor("#353534")
-        val stopFg    = if (isActive) phaseColor else Color.parseColor("#E5E2E1")
+        val pauseFg   = if (isActive) phaseColor else getColor(R.color.on_primary)
+        val stopBg    = if (isActive) darkBg else getColor(R.color.surface_container_highest)
+        val stopFg    = if (isActive) phaseColor else getColor(R.color.on_surface)
 
         binding.btnPauseSegment.backgroundTintList = ColorStateList.valueOf(pauseBg)
         binding.btnPauseSegment.setTextColor(pauseFg)
@@ -199,7 +203,7 @@ class MainActivity : AppCompatActivity() {
         // INITIALIZE button (setup only — always on dark bg)
         if (!isActive) {
             binding.btnStart.backgroundTintList = ColorStateList.valueOf(phaseColor)
-            binding.btnStart.setTextColor(Color.parseColor("#003825"))
+            binding.btnStart.setTextColor(getColor(R.color.on_primary))
         }
 
         // RESET button (finished — on phase bg)
@@ -216,10 +220,10 @@ class MainActivity : AppCompatActivity() {
         binding.tvTimer.alpha = if (state.phase == TimerPhase.PAUSED) 0.55f else 1f
 
         binding.tvPhaseLabel.text = when (state.phase) {
-            TimerPhase.SETUP    -> "READY"
-            TimerPhase.RUNNING  -> (state.activePhase?.message ?: "ON TRACK").uppercase()
-            TimerPhase.PAUSED   -> "PAUSED"
-            TimerPhase.FINISHED -> "TIME'S UP"
+            TimerPhase.SETUP    -> getString(R.string.label_ready)
+            TimerPhase.RUNNING  -> (state.activePhase?.message ?: getString(R.string.label_on_track)).uppercase()
+            TimerPhase.PAUSED   -> getString(R.string.label_paused)
+            TimerPhase.FINISHED -> getString(R.string.label_times_up)
         }
     }
 
@@ -236,20 +240,20 @@ class MainActivity : AppCompatActivity() {
                 binding.setupPanel.visibility      = View.VISIBLE
                 binding.segmentedControl.visibility = View.GONE
                 binding.btnStart.visibility         = View.VISIBLE
-                binding.btnStart.text               = "INITIALIZE"
+                binding.btnStart.text               = getString(R.string.label_initialize)
                 binding.btnReset.visibility         = View.GONE
             }
             TimerPhase.RUNNING -> {
                 binding.setupPanel.visibility      = View.GONE
                 binding.segmentedControl.visibility = View.VISIBLE
-                binding.btnPauseSegment.text        = "PAUSE"
+                binding.btnPauseSegment.text        = getString(R.string.label_pause)
                 binding.btnStart.visibility         = View.GONE
                 binding.btnReset.visibility         = View.GONE
             }
             TimerPhase.PAUSED -> {
                 binding.setupPanel.visibility      = View.GONE
                 binding.segmentedControl.visibility = View.VISIBLE
-                binding.btnPauseSegment.text        = "▶  RESUME"
+                binding.btnPauseSegment.text        = getString(R.string.label_resume)
                 binding.btnStart.visibility         = View.GONE
                 binding.btnReset.visibility         = View.GONE
             }

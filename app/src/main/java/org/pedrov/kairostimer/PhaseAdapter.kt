@@ -58,7 +58,7 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
         b.btnDelete.alpha = if (canDelete) 1f else 0.3f
         b.btnDelete.setOnClickListener {
             val pos = holder.bindingAdapterPosition
-            if (pos != RecyclerView.NO_ID.toInt() && phases.size > 1) {
+            if (pos != RecyclerView.NO_POSITION && phases.size > 1) {
                 phases.removeAt(pos)
                 notifyItemRemoved(pos)
                 notifyItemRangeChanged(pos, phases.size)
@@ -67,14 +67,14 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
 
         holder.nameWatcher = simpleWatcher { s ->
             val pos = holder.bindingAdapterPosition
-            if (pos != RecyclerView.NO_ID.toInt()) phases[pos] = phases[pos].copy(name = s)
+            if (pos != RecyclerView.NO_POSITION) phases[pos] = phases[pos].copy(name = s)
         }
         b.etName.addTextChangedListener(holder.nameWatcher)
 
         b.sliderThreshold.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
                 val pos = holder.bindingAdapterPosition
-                if (pos != RecyclerView.NO_ID.toInt()) {
+                if (pos != RecyclerView.NO_POSITION) {
                     val v = value.toInt()
                     phases[pos] = phases[pos].copy(thresholdPercent = v)
                     b.tvThresholdValue.text = "$v%"
@@ -84,7 +84,7 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
 
         holder.messageWatcher = simpleWatcher { s ->
             val pos = holder.bindingAdapterPosition
-            if (pos != RecyclerView.NO_ID.toInt()) phases[pos] = phases[pos].copy(message = s)
+            if (pos != RecyclerView.NO_POSITION) phases[pos] = phases[pos].copy(message = s)
         }
         b.etMessage.addTextChangedListener(holder.messageWatcher)
     }
@@ -112,7 +112,7 @@ class PhaseAdapter(private val phases: MutableList<PhaseConfig>) :
                 setImageDrawable(drawable)
                 setOnClickListener {
                     val pos = holder.bindingAdapterPosition
-                    if (pos != RecyclerView.NO_ID.toInt()) {
+                    if (pos != RecyclerView.NO_POSITION) {
                         phases[pos] = phases[pos].copy(colorHex = hex)
                         setupColorSwatches(holder, phases[pos])
                     }

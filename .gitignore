@@ -10,3 +10,9 @@
 local.properties
 app/build/
 *.jks
+
+# Signing secrets — never commit
+keystore.properties
+
+# Built artifacts — distribute via Releases, not git
+*.apk
